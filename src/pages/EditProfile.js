@@ -1,26 +1,98 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { auth } from '../firebase';
 import '../styles/EditProfile.css';
 
 const EditProfile = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [school, setSchool] = useState('');
   const [driver, setDriver] = useState('');
   const [carMake, setCarMake] = useState('');
   const [carModel, setCarModel] = useState('');
   const [carColor, setCarColor] = useState('');
-  const [licensePlate, setLicensePlate] = useState('');
-  const [capacity, setCapacity] = useState('');
+  const [carPlate, setCarPlate] = useState('');
+  const [carCapacity, setCarCapacity] = useState('');
+  const [carMpg, setCarMpg] = useState('');
+  const [firebaseUid, setFirebaseUid] = useState('');
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      setFirebaseUid(user.uid);
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const queryParams = new URLSearchParams({
+      firebaseUid,
+      name,
+      email,
+      phoneNumber,
+      school,
+      driver: driver === 'yes' ? 'true' : 'false',
+      carColor: driver === 'yes' ? carColor : '',
+      carPlate: driver === 'yes' ? carPlate : '',
+      carMake: driver === 'yes' ? carMake : '',
+      carModel: driver === 'yes' ? carModel : '',
+      carCapacity: driver === 'yes' ? carCapacity : '',
+      carMpg: driver === 'yes' ? carMpg : ''
+    }).toString();
+
+    const url = `http://localhost:8080/users?${queryParams}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST', // Change to 'POST' if your API expects a POST request
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        console.log('User profile saved successfully');
+      } else {
+        console.error('Failed to save user profile');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="editProfile">
       <h2>Edit Profile</h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         <label>Name: </label>
-        <input type="text" required />
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <label>Email: </label>
-        <input type="email" required />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <label>Phone Number: </label>
-        <input type="tel" required />
+        <input
+          type="tel"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+        />
         <label>School: </label>
-        <input type="text" required />
+        <input
+          type="text"
+          value={school}
+          onChange={(e) => setSchool(e.target.value)}
+          required
+        />
         <label>Driver: </label>
         <select
           value={driver}
@@ -54,18 +126,25 @@ const EditProfile = () => {
               onChange={(e) => setCarColor(e.target.value)}
               required
             />
-            <label>License Plate Number: </label>
+            <label>Car Plate: </label>
             <input
               type="text"
-              value={licensePlate}
-              onChange={(e) => setLicensePlate(e.target.value)}
+              value={carPlate}
+              onChange={(e) => setCarPlate(e.target.value)}
               required
             />
-            <label>Capacity: </label>
+            <label>Car Capacity: </label>
             <input
               type="number"
-              value={capacity}
-              onChange={(e) => setCapacity(e.target.value)}
+              value={carCapacity}
+              onChange={(e) => setCarCapacity(e.target.value)}
+              required
+            />
+            <label>Car MPG: </label>
+            <input
+              type="number"
+              value={carMpg}
+              onChange={(e) => setCarMpg(e.target.value)}
               required
             />
           </>
