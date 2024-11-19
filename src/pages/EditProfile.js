@@ -3,6 +3,7 @@ import { auth } from '../firebase';
 import '../styles/EditProfile.css';
 
 const EditProfile = () => {
+  const [firebaseUid, setFirebaseUid] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -13,8 +14,7 @@ const EditProfile = () => {
   const [carColor, setCarColor] = useState('');
   const [carPlate, setCarPlate] = useState('');
   const [carCapacity, setCarCapacity] = useState('');
-  const [carMpg, setCarMpg] = useState('');
-  const [firebaseUid, setFirebaseUid] = useState('');
+  
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -37,11 +37,11 @@ const EditProfile = () => {
       carPlate: driver === 'yes' ? carPlate : '',
       carMake: driver === 'yes' ? carMake : '',
       carModel: driver === 'yes' ? carModel : '',
-      carCapacity: driver === 'yes' ? carCapacity : '',
-      carMpg: driver === 'yes' ? carMpg : ''
+      carCapacity: driver === 'yes' ? carCapacity : ''
     }).toString();
 
-    const url = `http://localhost:8080/users?${queryParams}`;
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const url = `${backendUrl}/users?${queryParams}`;
 
     try {
       const response = await fetch(url, {
@@ -138,13 +138,6 @@ const EditProfile = () => {
               type="number"
               value={carCapacity}
               onChange={(e) => setCarCapacity(e.target.value)}
-              required
-            />
-            <label>Car MPG: </label>
-            <input
-              type="number"
-              value={carMpg}
-              onChange={(e) => setCarMpg(e.target.value)}
               required
             />
           </>
