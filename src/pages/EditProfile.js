@@ -45,7 +45,7 @@ const EditProfile = () => {
 
     try {
       const response = await fetch(url, {
-        method: 'POST', // Change to 'POST' if your API expects a POST request
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         }

@@ -1,43 +1,43 @@
-.editProfile {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  
-  .editProfile h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .editProfile form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .editProfile label {
-    margin-bottom: 5px;
-  }
-  
-  .editProfile input,
-  .editProfile select {
-    margin-bottom: 15px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  /* .editProfile button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  } */
-  
-  /* .editProfile button:hover {
-    background-color: #45a049;
-  } */
+.navbar {
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.navbar .links {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar a,
+.navbar button {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  background-color: #4facfe; /* Blue color */
+  border: none;
+  cursor: pointer;
+}
+
+.navbar a:hover,
+.navbar button:hover {
+  background-color: #f093fb; /* Pink color */
+}
+
+.navbar button {
+  background-color: #4facfe; /* Blue color */
+}
