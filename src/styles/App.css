@@ -6,8 +6,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to right, #4facfe, #f093fb); /* Blue to pink gradient */
+  /* background: linear-gradient(to right, #4facfe, #f093fb); */
   height: 100vh;
+  overflow-x: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,13 +20,19 @@ code {
 }
 
 .App {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
   text-align: center;
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  width: 100%;
+  /* max-width: 600px; */
+  width: 100vw;
+  height: 100vh;
+  padding-top: 100px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -48,7 +55,7 @@ input, select, button {
 }
 
 button {
-  background-color: #4facfe; /* Blue color */
+  background-color: #4facfe;
   color: white;
   border: none;
   cursor: pointer;
@@ -56,5 +63,9 @@ button {
 }
 
 button:hover {
-  background-color: #f093fb; /* Pink color */
+  background-color: #f093fb;
+}
+
+header {
+  align-items: center;
 }

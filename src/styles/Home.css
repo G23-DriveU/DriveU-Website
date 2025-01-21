@@ -1,0 +1,28 @@
+.home {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.teal-text {
+    color: teal;
+}
+
+.blue-text {
+    color: blue;
+}
+
+.signupbox {
+    background-color: rgb(255, 222, 89);
+    width: 100%;
+}
+
