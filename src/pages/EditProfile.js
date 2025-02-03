@@ -13,8 +13,6 @@ const EditProfile = () => {
   const [carModel, setCarModel] = useState('');
   const [carColor, setCarColor] = useState('');
   const [carPlate, setCarPlate] = useState('');
-  const [carCapacity, setCarCapacity] = useState('');
-  
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -37,11 +35,11 @@ const EditProfile = () => {
       carPlate: driver === 'yes' ? carPlate : '',
       carMake: driver === 'yes' ? carMake : '',
       carModel: driver === 'yes' ? carModel : '',
-      carCapacity: driver === 'yes' ? carCapacity : ''
     }).toString();
 
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const url = `${backendUrl}/users?${queryParams}`;
+    console.log('Request URL:', url);
 
     try {
       const response = await fetch(url, {
@@ -64,7 +62,7 @@ const EditProfile = () => {
   return (
     <div className="editProfile">
       <h2>Edit Profile</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="form-container">
         <label>Name: </label>
         <input
           type="text"
@@ -131,13 +129,6 @@ const EditProfile = () => {
               type="text"
               value={carPlate}
               onChange={(e) => setCarPlate(e.target.value)}
-              required
-            />
-            <label>Car Capacity: </label>
-            <input
-              type="number"
-              value={carCapacity}
-              onChange={(e) => setCarCapacity(e.target.value)}
               required
             />
           </>

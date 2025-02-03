@@ -12,13 +12,13 @@ const Home = () => {
             </div>
             <div className="bottom">
                 <div className="c1">
-                    
+                    <h3>Drivers are able to book in rides at specific times.</h3>
                 </div>
                 <div className="c2">
-
+                    <h3>Riders can sign up to ride with them.</h3>
                 </div>
                 <div className="c3">
-
+                    <h3>Happy driving!</h3>
                 </div>
             </div>
         </div>

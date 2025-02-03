@@ -1,0 +1,14 @@
+.driver {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.driverbottom {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  margin: 20px 0;
+}
+

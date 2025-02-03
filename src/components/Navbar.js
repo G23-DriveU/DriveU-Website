@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Navbar.css';
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -23,8 +24,22 @@ const Navbar = () => {
       }
     });
 
+    const reloadUser = async () => {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        await currentUser.reload();
+        if (currentUser.emailVerified) {
+          setUser(currentUser);
+        } else {
+          setUser(null);
+        }
+      }
+    };
+
+    reloadUser();
+
     return () => unsubscribe();
-  }, []);
+  }, [location]);
 
   const handleLogout = async () => {
     try {
