@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/EditProfile.css';
 
@@ -42,17 +43,12 @@ const EditProfile = () => {
     console.log('Request URL:', url);
 
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.ok) {
+      const response = await axios.post(url);
+      if (response.status === 201) {
         console.log('User profile saved successfully');
       } else {
         console.error('Failed to save user profile');
+        console.log('Response:', response);
       }
     } catch (error) {
       console.error('Error:', error);
