@@ -23,10 +23,10 @@ const Signup = () => {
     const intervalId = setInterval(async () => {
       const user = auth.currentUser;
       if (user) {
-        await user.reload(); // Reload user to get the latest status
+        await user.reload();
         if (user.emailVerified) {
           navigate('/editprofile');
-          clearInterval(intervalId); // Clear interval once email is verified
+          clearInterval(intervalId);
         }
       }
     }, 3000); // Check every 3 seconds
@@ -67,7 +67,7 @@ const Signup = () => {
   return (
     <div className="signup">
       <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="form-container">
         <label>Email: </label>
         <input
           type="email"
