@@ -1,3 +1,4 @@
+import vehicleModels from '../vehicle_models_cleaned.json';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
@@ -6,6 +7,9 @@ import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChang
 const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [carMake, setCarMake] = useState('');
+  const [carModel, setCarModel] = useState('');
+  const [modelOptions, setModelOptions] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +36,15 @@ const Signup = () => {
       clearInterval(intervalId);
     };
   }, [navigate]);
+
+  useEffect(() => {
+    if (carMake) {
+      const selectedMake = vehicleModels.find(make => make.Make === carMake);
+      setModelOptions(selectedMake ? selectedMake.Models : []);
+    } else {
+      setModelOptions([]);
+    }
+  }, [carMake]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -69,6 +82,24 @@ const Signup = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <label>Car Make: </label>
+        <select value={carMake} onChange={(e) => setCarMake(e.target.value)} required>
+          <option value="">Select Car Make</option>
+          {vehicleModels.map((make) => (
+            <option key={make.Make} value={make.Make}>
+              {make.Make}
+            </option>
+          ))}
+        </select>
+        <label>Car Model: </label>
+        <select value={carModel} onChange={(e) => setCarModel(e.target.value)} required>
+          <option value="">Select Car Model</option>
+          {modelOptions.map((model) => (
+            <option key={model} value={model}>
+              {model}
+            </option>
+          ))}
+        </select>
         <button type="submit">Sign Up</button>
       </form>
     </div>
