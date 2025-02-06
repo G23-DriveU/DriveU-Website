@@ -1,4 +1,4 @@
-import vehicleModels from '../vehicle_models_cleaned.json';
+import vehicleModels from './vehicle_models_cleaned.json';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
