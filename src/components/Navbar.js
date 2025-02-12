@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, Button, Avatar, IconButton, Menu, MenuItem } from '@mui/material';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -7,6 +7,7 @@ import '../styles/Navbar.css';
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -51,6 +52,14 @@ const Navbar = () => {
     }
   };
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <AppBar position="fixed"
       sx={{
@@ -58,13 +67,52 @@ const Navbar = () => {
         color: 'black',
       }}>
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold', color: '#333' }}>
-          DriveU
-        </Typography>
-        <Button color="inherit" component={Link} to="/" sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2}}>Home</Button>
-        <Button color="inherit" component={Link} to="/driver" sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2}}>Driver</Button>
-        <Button color="inherit" component={Link} to="/rider" sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2}}>Rider</Button>
-        {!user && <Button color="inherit" component={Link} to="/login" sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2}}>Login</Button>}
+        <Button 
+          color="inherit"
+          component={Link}
+          to="/"
+          sx={{ 
+            fontSize: 25, 
+            flexGrow: 1,
+            fontWeight: 'bold',
+            color: '#333',
+            '&:hover': {
+              backgroundColor: 'transparent',
+            },
+          }}>DriveU</Button>
+        
+        <Button 
+          color="inherit"
+          component={Link}
+          to="/driver" 
+          sx={{ 
+            color: '#333',
+            fontWeight: 'bold', 
+            marginLeft: 2
+          }}>Driver</Button>
+
+        <Button 
+          color="inherit"
+          component={Link}
+          to="/rider" 
+          sx={{ 
+            color: '#333',
+            fontWeight: 'bold', 
+            marginLeft: 2
+          }}>Rider</Button>
+        
+        {!user && (
+          <Button 
+            color="inherit"
+            component={Link}
+            to="/login" 
+            sx={{ 
+              color: '#333',
+              fontWeight: 'bold', 
+              marginLeft: 2
+            }}>Login</Button>
+        )}
+
         {!user && (
           <Button
             component={Link}
@@ -85,7 +133,21 @@ const Navbar = () => {
           </Button>
         )}
         {user && <Button color="inherit" component={Link} to="/editprofile" sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2 }}>Edit Profile</Button>}
-        {user && <Button color="inherit" onClick={handleLogout} sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2 }}>Logout</Button>}
+        {/* {user && <Button color="inherit" onClick={handleLogout} sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2 }}>Logout</Button>} */}
+        
+        {user && (
+          <IconButton onClick={handleMenuOpen} sx={{ marginLeft: 2 }}>
+            <Avatar alt={user.displayName} src={user.photoURL} />
+          </IconButton>
+        )}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );

@@ -7,13 +7,17 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EditProfile from './pages/EditProfile';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './theme';
 
 function App() {
   return (
     <Router>
       <div className="App">
-          <Navbar />
-        
+          <ThemeProvider theme={theme}>
+            <Navbar />
+          </ThemeProvider>
+
           <div className="content">
             <Routes>
               <Route path="/" element={<Home />} />
