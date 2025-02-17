@@ -1,7 +1,7 @@
 /* global paypal */
 import { useEffect } from 'react';
 
-function PayPalLoginButton() {
+function PayPalLoginButton({ onAuthCodeReceived }) {
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://www.paypalobjects.com/js/external/api.js';
@@ -19,13 +19,18 @@ function PayPalLoginButton() {
           buttonShape: 'pill',
           buttonSize: 'sm',
           fullPage: 'false',
-          returnurl: 'https://driveu.online/signup',
-          nonce: '111111'
+          returnurl: 'https://driveu.online/editprofile',
+          nonce: '111111',
+          onComplete: function(data) {
+            if (data && data.auth_code) {
+              onAuthCodeReceived(data.auth_code);
+            }
+          }
         });
       });
     };
     document.body.appendChild(script);
-  }, []);
+  }, [onAuthCodeReceived]);
 
   return <span id="linkPayPal" />;
 }

@@ -9,8 +9,15 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import EditProfile from './pages/EditProfile';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
+import Profile from './pages/Profile';
+import PastTrips from './pages/PastTrips';
+import React, { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    document.title = 'DriveU';
+  }, []);
+
   return (
     <Router>
       <div className="App">
@@ -18,7 +25,7 @@ function App() {
             <Navbar />
           </ThemeProvider>
 
-          <div className="content">
+          <div className="page-container">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/driver" element={<Driver />} />
@@ -26,6 +33,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/editprofile" element={<EditProfile />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/pasttrips" element={<PastTrips />} />
             </Routes>
           </div>
       </div>

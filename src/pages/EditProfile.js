@@ -3,6 +3,7 @@ import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/EditProfile.css';
 import vehicleModels from './vehicle_models_cleaned.json';
+import PayPalLoginButton from '../components/linkPayPal';
 
 const EditProfile = () => {
   const [firebaseUid, setFirebaseUid] = useState('');
@@ -16,6 +17,7 @@ const EditProfile = () => {
   const [modelOptions, setModelOptions] = useState([]);
   const [carColor, setCarColor] = useState('');
   const [carPlate, setCarPlate] = useState('');
+  const [authCode, setAuthCode] = useState('');
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -47,6 +49,7 @@ const EditProfile = () => {
       carPlate: driver === 'yes' ? carPlate : '',
       carMake: driver === 'yes' ? carMake : '',
       carModel: driver === 'yes' ? carModel : '',
+      authCode: driver === 'yes' ? authCode : '',
     }).toString();
 
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -156,6 +159,7 @@ const EditProfile = () => {
               onChange={(e) => setCarPlate(e.target.value)}
               required
             />
+            <PayPalLoginButton onAuthCodeReceived={setAuthCode}/>
           </>
         )}
         <button type="submit">Save</button>
