@@ -1,7 +1,7 @@
 /* global paypal */
 import { useEffect } from 'react';
 
-function PayPalLoginButton({ onAuthCodeReceived }) {
+function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://www.paypalobjects.com/js/external/api.js';
@@ -23,6 +23,16 @@ function PayPalLoginButton({ onAuthCodeReceived }) {
           nonce: '111111',
           onComplete: function(data) {
             if (data && data.auth_code) {
+              localStorage.setItem('firebaseUid', userInfo.firebaseUid);
+              localStorage.setItem('name', userInfo.name);
+              localStorage.setItem('email', userInfo.email);
+              localStorage.setItem('phoneNumber', userInfo.phoneNumber);
+              localStorage.setItem('school', userInfo.school);
+              localStorage.setItem('driver', userInfo.driver);
+              localStorage.setItem('carMake', userInfo.carMake);
+              localStorage.setItem('carModel', userInfo.carModel);
+              localStorage.setItem('carColor', userInfo.carColor);
+              localStorage.setItem('carPlate', userInfo.carPlate);
               onAuthCodeReceived(data.auth_code);
             }
           }
@@ -30,7 +40,7 @@ function PayPalLoginButton({ onAuthCodeReceived }) {
       });
     };
     document.body.appendChild(script);
-  }, [onAuthCodeReceived]);
+  }, [onAuthCodeReceived, userInfo]);
 
   return <span id="linkPayPal" />;
 }

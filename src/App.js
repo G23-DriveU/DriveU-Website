@@ -11,13 +11,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import Profile from './pages/Profile';
 import PastTrips from './pages/PastTrips';
-import React, { useEffect } from 'react';
 
 function App() {
-  useEffect(() => {
-    document.title = 'DriveU';
-  }, []);
-
   return (
     <Router>
       <div className="App">

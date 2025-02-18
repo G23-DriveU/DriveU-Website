@@ -73,34 +73,6 @@ const EditProfile = () => {
     <div className="editProfile">
       <h2>Edit Profile</h2>
       <form onSubmit={handleSubmit} className="form-container">
-        <label>Name: </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <label>Email: </label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <label>Phone Number: </label>
-        <input
-          type="tel"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          required
-        />
-        <label>School: </label>
-        <input
-          type="text"
-          value={school}
-          onChange={(e) => setSchool(e.target.value)}
-          required
-        />
         <label>Driver: </label>
         <select
           value={driver}
@@ -111,22 +83,62 @@ const EditProfile = () => {
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
-        {driver === 'yes' && (
+
+        {authCode && (
           <>
-            {/* <label>Car Make: </label>
-            <input
-              type="text"
-              value={carMake}
-              onChange={(e) => setCarMake(e.target.value)}
-              required
-            />
-            <label>Car Model: </label>
-            <input
-              type="text"
-              value={carModel}
-              onChange={(e) => setCarModel(e.target.value)}
-              required
-            /> */}
+        <label>Name: </label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+
+        <label>Email: </label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+
+        <label>Phone Number: </label>
+        <input
+          type="tel"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+        />
+
+        <label>School: </label>
+        <input
+          type="text"
+          value={school}
+          onChange={(e) => setSchool(e.target.value)}
+          required
+        />
+        </>
+        )}
+        {driver === 'yes' && !authCode && (
+          <PayPalLoginButton 
+            onAuthCodeReceived={setAuthCode}
+            userInfo={{
+              firebaseUid,
+              name,
+              email,
+              phoneNumber,
+              school,
+              driver,
+              carMake,
+              carModel,
+              carColor,
+              carPlate,
+            }}
+          />
+        )}
+
+        {driver === 'yes' && authCode && (
+          <>
             <label>Car Make: </label>
             <select value={carMake} onChange={(e) => setCarMake(e.target.value)} required>
               <option value="">Select Car Make</option>
@@ -136,6 +148,7 @@ const EditProfile = () => {
                 </option>
               ))}
             </select>
+
             <label>Car Model: </label>
             <select value={carModel} onChange={(e) => setCarModel(e.target.value)} required>
               <option value="">Select Car Model</option>
@@ -145,6 +158,7 @@ const EditProfile = () => {
                 </option>
               ))}
             </select>
+
             <label>Car Color: </label>
             <input
               type="text"
@@ -152,6 +166,7 @@ const EditProfile = () => {
               onChange={(e) => setCarColor(e.target.value)}
               required
             />
+
             <label>Car Plate: </label>
             <input
               type="text"
@@ -159,7 +174,6 @@ const EditProfile = () => {
               onChange={(e) => setCarPlate(e.target.value)}
               required
             />
-            <PayPalLoginButton onAuthCodeReceived={setAuthCode}/>
           </>
         )}
         <button type="submit">Save</button>
