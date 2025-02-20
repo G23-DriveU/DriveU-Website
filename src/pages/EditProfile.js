@@ -23,6 +23,18 @@ const EditProfile = () => {
     const user = auth.currentUser;
     if (user) {
       setFirebaseUid(user.uid);
+    } else {
+      setFirebaseUid(localStorage.getItem('firebaseUid') || '');
+      setName(localStorage.getItem('name') || '');
+      setEmail(localStorage.getItem('email') || '');
+      setPhoneNumber(localStorage.getItem('phoneNumber') || '');
+      setSchool(localStorage.getItem('school') || '');
+      setDriver(localStorage.getItem('driver') || '');
+      setCarMake(localStorage.getItem('carMake') || '');
+      setCarModel(localStorage.getItem('carModel') || '');
+      setCarColor(localStorage.getItem('carColor') || '');
+      setCarPlate(localStorage.getItem('carPlate') || '');
+      setAuthCode(localStorage.getItem('authCode') || '');
     }
   }, []);
 
