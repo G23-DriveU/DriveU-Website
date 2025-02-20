@@ -36,6 +36,13 @@ const EditProfile = () => {
       setCarPlate(localStorage.getItem('carPlate') || '');
       setAuthCode(localStorage.getItem('authCode') || '');
     }
+
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) {
+      setAuthCode(code);
+      localStorage.setItem('authCode', code);
+    }
   }, []);
 
   useEffect(() => {
@@ -88,7 +95,10 @@ const EditProfile = () => {
         <label>Driver: </label>
         <select
           value={driver}
-          onChange={(e) => setDriver(e.target.value)}
+          onChange={(e) => {
+            setDriver(e.target.value);
+            localStorage.setItem('driver', e.target.value);
+          }}
           required
         >
           <option value="">Select</option>
