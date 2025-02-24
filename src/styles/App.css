@@ -72,3 +72,7 @@ button:hover {
 header {
   align-items: center;
 }
+
+.page-container {
+  padding-top: 30px;
+}

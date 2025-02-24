@@ -146,6 +146,7 @@ const Navbar = () => {
           onClose={handleMenuClose}
         >
           <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
+          <MenuItem onClick={() => navigate('/pasttrips')}>Past Trips</MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
