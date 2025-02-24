@@ -99,6 +99,7 @@ const EditProfile = () => {
           onChange={(e) => {
             setDriver(e.target.value);
             localStorage.setItem('driver', e.target.value);
+            localStorage.setItem('firebaseUid', firebaseUid);
           }}
           required
         >
