@@ -71,6 +71,7 @@ const EditProfile = () => {
       authCode: driver === 'yes' ? authCode : '',
     }).toString();
 
+    console.log('firebaseUid:', firebaseUid);
     const backendUrl = process.env.REACT_APP_BACKEND_URL;
     const url = `${backendUrl}/users?${queryParams}`;
     console.log('Request URL:', url);
