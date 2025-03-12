@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
+import '../styles/Signup.css';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -69,7 +70,7 @@ const Signup = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Sign Up</button>
+        <button id="signup" type="submit">Sign Up</button>
       </form>
     </div>
   );

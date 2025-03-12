@@ -1,8 +1,11 @@
+import '../styles/Driver.css';
+import driveImage from '../images/drive.png';
+
 const Driver = () => {
     return (
         <div className="driver">
             <h2>Welcome to</h2>
-            <h1>DriveU</h1>             
+            <img src={driveImage} alt="DriveU" className="driveu" />             
             <p>
                 At DriveU, our mission is to provide a safe, reliable,
                 and rewarding driving experience. We connect drivers with passengers

@@ -1,8 +1,11 @@
+import '../styles/Rider.css';
+import driveImage from '../images/drive.png';
+
 const Rider = () => {
   return (
-    <div className="driver">
+    <div className="rider">
             <h2>Welcome to</h2>
-            <h1>DriveU</h1>
+            <img src={driveImage} alt="DriveU" className="driveu" />
             <p>
                 DriveU aims to make transportation easy, affordable, and inclusive for riders.
                 It helps students find reliable rides that fit their needs and schedule while

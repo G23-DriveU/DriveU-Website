@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/EditProfile.css';
-import vehicleModels from './vehicle_models_cleaned.json';
+import vehicleModels from '../data/vehicle_models_cleaned.json';
+import universityNames from '../data/us_institutions.json';
 import PayPalLoginButton from '../components/linkPayPal';
 
 const EditProfile = () => {
@@ -11,6 +13,8 @@ const EditProfile = () => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [school, setSchool] = useState('');
+  const [filteredSchools, setFilteredSchools] = useState([]); // State for filtered university names
+  const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
   const [driver, setDriver] = useState('');
   const [carMake, setCarMake] = useState('');
   const [carModel, setCarModel] = useState('');
@@ -18,11 +22,13 @@ const EditProfile = () => {
   const [carColor, setCarColor] = useState('');
   const [carPlate, setCarPlate] = useState('');
   const [authCode, setAuthCode] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
       setFirebaseUid(user.uid);
+      setEmail(user.email);
     } else {
       setFirebaseUid(localStorage.getItem('firebaseUid') || '');
       setName(localStorage.getItem('name') || '');
@@ -54,6 +60,27 @@ const EditProfile = () => {
     }
   }, [carMake]);
 
+  const handleSchoolChange = (e) => {
+    const value = e.target.value;
+    setSchool(value);
+    if (value) {
+      const filtered = universityNames.filter((name) =>
+        typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSchools(filtered);
+      setShowDropdown(true);
+    } else {
+      setFilteredSchools([]);
+      setShowDropdown(false);
+    }
+  };
+
+  const handleSchoolSelect = (school) => {
+    setSchool(school);
+    setFilteredSchools([]);
+    setShowDropdown(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -80,6 +107,7 @@ const EditProfile = () => {
       const response = await axios.post(url);
       if (response.status === 201) {
         console.log('User profile saved successfully');
+        navigate('/');
       } else {
         console.error('Failed to save user profile');
         console.log('Response:', response);
@@ -108,43 +136,53 @@ const EditProfile = () => {
           <option value="no">No</option>
         </select>
 
-        {authCode && (
+        {(authCode || driver === 'no') && (
           <>
-        <label>Name: </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+            <label>Name: </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
 
-        <label>Email: </label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+            <label>Email: </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled
+            />
 
-        <label>Phone Number: </label>
-        <input
-          type="tel"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          required
-        />
+            <label>Phone Number: </label>
+            <input
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+            />
 
-        <label>School: </label>
-        <input
-          type="text"
-          value={school}
-          onChange={(e) => setSchool(e.target.value)}
-          required
-        />
-        </>
+            <label>School: </label>
+            <input
+              type="text"
+              value={school}
+              onChange={handleSchoolChange}
+              required
+            />
+            {showDropdown && (
+              <ul className="dropdown">
+                {filteredSchools.map((school, index) => (
+                  <li key={index} onClick={() => handleSchoolSelect(school)}>
+                    {school}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
         {driver === 'yes' && !authCode && (
-          <PayPalLoginButton 
+          <PayPalLoginButton
             onAuthCodeReceived={setAuthCode}
             userInfo={{
               firebaseUid,

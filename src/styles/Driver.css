@@ -5,10 +5,24 @@
     padding: 20px;
 }
 
-.driverbottom {
+.driver > p {
   max-width: 600px;
   width: 100%;
   text-align: center;
   margin: 20px 0;
+  font-size: 1.2em;
+}
+
+.driverbottom > p {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  margin: 20px 0;
+  font-size: 1.2em;
+}
+
+.driveu {
+  width: 300px;
+  height: auto;
 }
 

@@ -60,6 +60,11 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
+  const handleMenuItemClick = (path) => {
+    navigate(path);
+    handleMenuClose();
+  };
+
   return (
     <AppBar position="fixed"
       sx={{
@@ -79,6 +84,7 @@ const Navbar = () => {
             '&:hover': {
               backgroundColor: 'transparent',
             },
+            marginRight: 2,
           }}>DriveU</Button>
         
         <Button 
@@ -87,8 +93,8 @@ const Navbar = () => {
           to="/driver" 
           sx={{ 
             color: '#333',
-            fontWeight: 'bold', 
-            marginLeft: 2
+            fontWeight: 'bold',
+            marginX: 2
           }}>Driver</Button>
 
         <Button 
@@ -98,7 +104,7 @@ const Navbar = () => {
           sx={{ 
             color: '#333',
             fontWeight: 'bold', 
-            marginLeft: 2
+            marginX: 2
           }}>Rider</Button>
         
         {!user && (
@@ -109,7 +115,7 @@ const Navbar = () => {
             sx={{ 
               color: '#333',
               fontWeight: 'bold', 
-              marginLeft: 2
+              marginX: 2
             }}>Login</Button>
         )}
 
@@ -123,7 +129,7 @@ const Navbar = () => {
               color: 'black',
               fontWeight: 'bold',
               padding: '10px 20px',
-              marginLeft: 2,
+              marginX: 2,
               '&:hover': {
                 background: 'linear-gradient(to right,rgb(210, 67, 223),rgb(250, 242, 131))',
               },
@@ -132,12 +138,16 @@ const Navbar = () => {
             Sign Up Today!
           </Button>
         )}
-        {user && <Button color="inherit" component={Link} to="/editprofile" sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2 }}>Edit Profile</Button>}
-        {/* {user && <Button color="inherit" onClick={handleLogout} sx={{ color: '#333', fontWeight: 'bold', marginLeft: 2 }}>Logout</Button>} */}
         
         {user && (
-          <IconButton onClick={handleMenuOpen} sx={{ marginLeft: 2 }}>
-            <Avatar alt={user.displayName} src={user.photoURL} />
+          <IconButton 
+            onClick={handleMenuOpen} 
+            sx={{
+              marginX: 2,
+              width: 40,
+              height: 40,
+            }}>
+            <Avatar alt={user.displayName} src={user.photoURL} sx={{ width: 40, height: 40 }}/>
           </IconButton>
         )}
         <Menu
@@ -145,9 +155,9 @@ const Navbar = () => {
           open={Boolean(anchorEl)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
-          <MenuItem onClick={() => navigate('/pasttrips')}>Past Trips</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick('/profile')}>Profile</MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick('/pasttrips')}>Past Trips</MenuItem>
+          <MenuItem onClick={() => { handleLogout(); handleMenuClose(); }}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

@@ -1,9 +1,10 @@
 import '../styles/Home.css';
+import driveImage from '../images/drive.png';
 
 const Home = () => {
     return (  
         <div className="home">
-            <h1>DriveU</h1>
+            <img src={driveImage} alt="DriveU" className="driveu" />
             <h2>Where <span className="teal-text">carpools</span> meets pleasure</h2>
             <h3>We are here to create innovative carpool experiences for college students.</h3>
             <div className="signupbox">
@@ -15,7 +16,7 @@ const Home = () => {
                     <h3>Drivers are able to book in rides at specific times.</h3>
                 </div>
                 <div className="c2">
-                    <h3>Riders can sign up to ride with them.HEEELLLLOOOO</h3>
+                    <h3>Riders can sign up to ride with them.</h3>
                 </div>
                 <div className="c3">
                     <h3>Happy driving!</h3>
