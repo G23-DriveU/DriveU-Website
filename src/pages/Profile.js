@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/Profile.css';
-import universityNames from '../data/us_institutions.json'; // Import the JSON file
+import universityNames from '../data/us_institutions.json';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -18,40 +18,36 @@ const Profile = () => {
     carColor: '',
     carPlate: '',
   });
-  const [filteredSchools, setFilteredSchools] = useState([]); // State for filtered university names
-  const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
+  const [userId, setUserId] = useState(null);
+  const [filteredSchools, setFilteredSchools] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       const user = auth.currentUser;
       if (user) {
-        const storedUserData = localStorage.getItem('userData');
-        const storedUserId = localStorage.getItem('userId');
-        if (storedUserData && storedUserId === user.uid) {
-          const parsedUserData = JSON.parse(storedUserData);
-          setUserData(parsedUserData);
-          setFormData({
-            ...parsedUserData,
-            driver: parsedUserData.driver ? 'yes' : 'no',
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`, {
+            params: {
+              firebaseUid: user.uid,
+            },
           });
-        } else {
-          try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`, {
-              params: {
-                firebaseUid: user.uid,
-              },
-            });
-            console.log('API response:', response.data); // Debugging
+
+          const userId = response.data.user.id;
+          setUserId(userId);
+
+          console.log('API response:', response.data); // Debugging
+          if (response.data.user) {
             setUserData(response.data.user);
             setFormData({
               ...response.data.user,
               driver: response.data.user.driver ? 'yes' : 'no',
             });
-            localStorage.setItem('userData', JSON.stringify(response.data.user));
-            localStorage.setItem('userId', user.uid);
-          } catch (error) {
-            console.error('Error fetching user data:', error);
+          } else {
+            console.error('User data not found');
           }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
       }
     };
@@ -67,24 +63,26 @@ const Profile = () => {
     setIsEditing(false);
     setFormData({
       ...userData,
-      driver: userData.driver ? 'yes' : 'no', // Convert boolean to string
+      driver: userData.driver ? 'yes' : 'no',
     });
   };
 
   const handleSaveChanges = async () => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/users`, {
-        firebaseUid: auth.currentUser.uid,
-        ...formData,
-        driver: formData.driver === 'yes', // Convert string back to boolean
+        params: {
+          userId: userId,
+          ...formData,
+          driver: formData.driver === 'yes',
+        },
       });
+      console.log('Paramters:', response.config.params); // Debugging
       console.log('Save response:', response.data); // Debugging
       setUserData(formData);
       setIsEditing(false);
-      localStorage.setItem('userData', JSON.stringify(formData));
-      localStorage.setItem('userId', auth.currentUser.uid);
     } catch (error) {
       console.error('Error saving user data:', error);
+      console.log('Driver status:', formData.driver === 'yes'); // Debugging
     }
   };
 

@@ -13,8 +13,8 @@ const EditProfile = () => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [school, setSchool] = useState('');
-  const [filteredSchools, setFilteredSchools] = useState([]); // State for filtered university names
-  const [showDropdown, setShowDropdown] = useState(false); // State for dropdown visibility
+  const [filteredSchools, setFilteredSchools] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [driver, setDriver] = useState('');
   const [carMake, setCarMake] = useState('');
   const [carModel, setCarModel] = useState('');
