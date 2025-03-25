@@ -10,6 +10,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [firebaseUid, setFirebaseUid] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -17,6 +18,7 @@ const Navbar = () => {
         await currentUser.reload();
         if (currentUser.emailVerified) {
           setUser(currentUser);
+          setFirebaseUid(currentUser.uid);
         } else {
           setUser(null);
         }
@@ -41,6 +43,11 @@ const Navbar = () => {
 
     return () => unsubscribe();
   }, [location]);
+
+  const getProfilePictureUrl = () => {
+    if (!firebaseUid) return 'default-profile.png';
+    return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
+  };
 
   const handleLogout = async () => {
     try {
@@ -122,7 +129,7 @@ const Navbar = () => {
         {!user && (
           <Button
             component={Link}
-            to="/signup"
+            to="/editprofile"
             sx={{
               background: 'linear-gradient(to right,rgb(222, 95, 236),rgb(241, 239, 90))',
               borderRadius: '20px',
@@ -147,7 +154,7 @@ const Navbar = () => {
               width: 40,
               height: 40,
             }}>
-            <Avatar alt={user.displayName} src={user.photoURL} sx={{ width: 40, height: 40 }}/>
+            <Avatar alt={user.displayName} src={getProfilePictureUrl()} sx={{ width: 40, height: 40 }}/>
           </IconButton>
         )}
         <Menu

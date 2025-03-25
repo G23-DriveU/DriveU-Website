@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { auth } from '../firebase';
+import '../styles/PastTrips.css';
 
 const PastTrips = () => {
   const [driverTrips, setDriverTrips] = useState([]);
@@ -17,7 +18,7 @@ const PastTrips = () => {
               firebaseUid: user.uid,
             },
           });
-          console.log('User API response:', response.data); // Debugging
+          // console.log('User API response:', response.data); // Debugging
           setUserId(response.data.user.id);
         } catch (error) {
           console.error('Error fetching user ID:', error);
@@ -37,7 +38,7 @@ const PastTrips = () => {
               userId: userId,
             },
           });
-          console.log('Trips API response:', response.data); // Debugging
+          // console.log('Trips API response:', response.data); // Debugging
           setDriverTrips(response.data.driverTrips || []);
           setRiderTrips(response.data.riderTrips || []);
         } catch (error) {
@@ -49,48 +50,39 @@ const PastTrips = () => {
     fetchPastTrips();
   }, [userId]);
 
-  console.log('Driver Trips:', driverTrips); // Debugging
-  console.log('Rider Trips:', riderTrips); // Debugging
-
   if (driverTrips.length === 0 && riderTrips.length === 0) {
     return <div>No past trips found.</div>;
   }
 
   return (
-    <div>
+    <div className="past-trips-container">
       <h1>Past Trips</h1>
       {driverTrips.length > 0 && (
         <>
           <h2>Driver Trips</h2>
-          <ul>
+          <div className="trips-list">
             {driverTrips.map((trip, index) => (
-              <li key={index}>
-                <p><strong>Date:</strong> {trip.date}</p>
-                <p><strong>Destination:</strong> {trip.destination}</p>
-                <p><strong>Distance:</strong> {trip.distance} miles</p>
-                <p><strong>Duration:</strong> {trip.duration} minutes</p>
-              </li>
+              <div key={index} className="trip-item">
+                <p>Your Trip to {trip.destination}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </>
       )}
       {riderTrips.length > 0 && (
         <>
           <h2>Rider Trips</h2>
-          <ul>
+          <div className="trips-list">
             {riderTrips.map((trip, index) => (
-              <li key={index}>
-                <p><strong>Date:</strong> {trip.date}</p>
-                <p><strong>Destination:</strong> {trip.destination}</p>
-                <p><strong>Distance:</strong> {trip.distance} miles</p>
-                <p><strong>Duration:</strong> {trip.duration} minutes</p>
-              </li>
+              <div key={index} className="trip-item">
+                <p>Your Trip to {trip.destination}</p>
+              </div>
             ))}
-          </ul>
+          </div>
         </>
       )}
     </div>
   );
-}
+};
 
 export default PastTrips;

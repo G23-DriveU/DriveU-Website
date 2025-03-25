@@ -18,6 +18,7 @@ const Profile = () => {
     carColor: '',
     carPlate: '',
   });
+  const [firebaseUid, setFirebaseUid] = useState(null);
   const [userId, setUserId] = useState(null);
   const [filteredSchools, setFilteredSchools] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -26,6 +27,7 @@ const Profile = () => {
     const fetchUserData = async () => {
       const user = auth.currentUser;
       if (user) {
+        setFirebaseUid(user.uid);
         try {
           const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`, {
             params: {
@@ -37,6 +39,7 @@ const Profile = () => {
           setUserId(userId);
 
           console.log('API response:', response.data); // Debugging
+          console.log('User ID:', userId); // Debugging
           if (response.data.user) {
             setUserData(response.data.user);
             setFormData({
@@ -55,6 +58,11 @@ const Profile = () => {
     fetchUserData();
   }, []);
 
+  const getProfilePictureUrl = () => {
+    if (!firebaseUid) return 'default-profile.png';
+    return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
+  };
+
   const handleEditProfile = () => {
     setIsEditing(true);
   };
@@ -69,16 +77,36 @@ const Profile = () => {
 
   const handleSaveChanges = async () => {
     try {
-      const response = await axios.put(`${process.env.REACT_APP_BACKEND_URL}/users`, {
-        params: {
-          userId: userId,
-          ...formData,
-          driver: formData.driver === 'yes',
-        },
-      });
-      console.log('Paramters:', response.config.params); // Debugging
+      const queryParams = new URLSearchParams({
+        userId: userId,
+        name: formData.name,
+        phoneNumber: formData.phoneNumber,
+        school: formData.school,
+        driver: formData.driver === 'yes' ? 'true' : 'false',
+      }).toString();
+
+      if (formData.driver === 'yes') {
+        queryParams.append('carColor', formData.carColor);
+        queryParams.append('carPlate', formData.carPlate);
+        queryParams.append('carMake', formData.carMake);
+        queryParams.append('carModel', formData.carModel);
+      }
+
+      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams}`;
+      console.log('Request URL:', requestUrl); // Debugging
+
+      const response = await axios.put(requestUrl);
       console.log('Save response:', response.data); // Debugging
-      setUserData(formData);
+
+      setUserData({
+        ...formData,
+        driver: formData.driver === 'yes', // Convert to boolean for consistency
+      });
+  
+      setFormData({
+        ...formData,
+        driver: formData.driver === 'yes' ? 'yes' : 'no', // Ensure it's 'yes' or 'no'
+      });
       setIsEditing(false);
     } catch (error) {
       console.error('Error saving user data:', error);
@@ -128,7 +156,7 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <img src={userData.profilePicture || 'default-profile.png'} alt="Profile" className="profile-picture" />
+        <img src={getProfilePictureUrl()} alt="Profile" className="profile-picture" />
         <h2>{userData.name}</h2>
         <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
       </div>

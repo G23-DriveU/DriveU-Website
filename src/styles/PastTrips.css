@@ -1,0 +1,31 @@
+.past-trips-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+.trips-list {
+    margin-top: 20px;
+}
+
+.trip-item {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.trip-item p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.trip-item strong {
+    color: #333;
+}
