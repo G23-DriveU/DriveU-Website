@@ -3,6 +3,7 @@ import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/Profile.css';
 import universityNames from '../data/us_institutions.json';
+import { Avatar } from '@mui/material';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -59,7 +60,7 @@ const Profile = () => {
   }, []);
 
   const getProfilePictureUrl = () => {
-    if (!firebaseUid) return 'default-profile.png';
+    if (!firebaseUid) return null;
     return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
   };
 
@@ -75,6 +76,19 @@ const Profile = () => {
     });
   };
 
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+
+    const phoneNumber = value.replace(/[^\d]/g, '');
+  
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  };
+
   const handleSaveChanges = async () => {
     try {
       const queryParams = new URLSearchParams({
@@ -83,7 +97,7 @@ const Profile = () => {
         phoneNumber: formData.phoneNumber,
         school: formData.school,
         driver: formData.driver === 'yes' ? 'true' : 'false',
-      }).toString();
+      });
 
       if (formData.driver === 'yes') {
         queryParams.append('carColor', formData.carColor);
@@ -92,7 +106,7 @@ const Profile = () => {
         queryParams.append('carModel', formData.carModel);
       }
 
-      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams}`;
+      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams.toString()}`;
       console.log('Request URL:', requestUrl); // Debugging
 
       const response = await axios.put(requestUrl);
@@ -100,12 +114,12 @@ const Profile = () => {
 
       setUserData({
         ...formData,
-        driver: formData.driver === 'yes', // Convert to boolean for consistency
+        driver: formData.driver === 'yes',
       });
   
       setFormData({
         ...formData,
-        driver: formData.driver === 'yes' ? 'yes' : 'no', // Ensure it's 'yes' or 'no'
+        driver: formData.driver === 'yes' ? 'yes' : 'no',
       });
       setIsEditing(false);
     } catch (error) {
@@ -116,24 +130,29 @@ const Profile = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+  
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: name === 'phoneNumber' ? formatPhoneNumber(value) : value,
     }));
   };
 
   const handleSchoolChange = (e) => {
     const value = e.target.value;
+  
     setFormData((prevData) => ({
       ...prevData,
       school: value,
     }));
+  
     if (value) {
-      const filtered = universityNames.filter((name) =>
-        typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
-      );
+      const filtered = universityNames
+        .map((entry) => entry.institution)
+        .filter((name) =>
+          typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
+        );
       setFilteredSchools(filtered);
-      setShowDropdown(true);
+      setShowDropdown(filtered.length > 0);
     } else {
       setFilteredSchools([]);
       setShowDropdown(false);
@@ -156,7 +175,14 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <img src={getProfilePictureUrl()} alt="Profile" className="profile-picture" />
+        {/* <img src={getProfilePictureUrl()} alt="Profile" className="profile-picture" /> */}
+        <Avatar
+          alt={userData.name}
+          src={getProfilePictureUrl()}
+          sx={{ width: 100, height: 100 }}
+        >
+          {userData.name?.charAt(0)}
+        </Avatar>
         <h2>{userData.name}</h2>
         <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
       </div>
@@ -193,6 +219,7 @@ const Profile = () => {
             </label>
             <label>
               <strong>School:</strong>
+              <div className="dropdown-container">
               <input
                 type="text"
                 name="school"
@@ -208,6 +235,7 @@ const Profile = () => {
                   ))}
                 </ul>
               )}
+              </div>
             </label>
             <label>
               <strong>Driver:</strong>

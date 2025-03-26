@@ -4,7 +4,7 @@ import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/EditProfile.css';
 import vehicleModels from '../data/vehicle_models_cleaned.json';
-// import universityNames from '../data/us_institutions.json';
+import universityNames from '../data/us_institutions.json';
 import PayPalLoginButton from '../components/linkPayPal';
 import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
 
@@ -14,8 +14,8 @@ const SignupPage = () => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [school, setSchool] = useState('');
-  // const [filteredSchools, setFilteredSchools] = useState([]);
-  // const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredSchools, setFilteredSchools] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [driver, setDriver] = useState('');
   const [carMake, setCarMake] = useState('');
   const [carModel, setCarModel] = useState('');
@@ -69,26 +69,29 @@ const SignupPage = () => {
     }
   }, [carMake]);
 
-  // const handleSchoolChange = (e) => {
-  //   const value = e.target.value;
-  //   setSchool(value);
-  //   if (value) {
-  //     const filtered = universityNames.filter((name) =>
-  //       typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
-  //     );
-  //     setFilteredSchools(filtered);
-  //     setShowDropdown(true);
-  //   } else {
-  //     setFilteredSchools([]);
-  //     setShowDropdown(false);
-  //   }
-  // };
+  const handleSchoolChange = (e) => {
+    const value = e.target.value;
+    setSchool(value);
+  
+    if (value) {
+      const filtered = universityNames
+        .map((entry) => entry.institution)
+        .filter((name) =>
+          typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
+        );
+      setFilteredSchools(filtered);
+      setShowDropdown(filtered.length > 0);
+    } else {
+      setFilteredSchools([]);
+      setShowDropdown(false);
+    }
+  };
 
-  // const handleSchoolSelect = (school) => {
-  //   setSchool(school);
-  //   setFilteredSchools([]);
-  //   setShowDropdown(false);
-  // };
+  const handleSchoolSelect = (school) => {
+    setSchool(school);
+    setFilteredSchools([]);
+    setShowDropdown(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,7 +106,7 @@ const SignupPage = () => {
       let emailVerified = false;
       while (!emailVerified) {
         await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds
-        await user.reload(); // Reload user data from Firebase
+        await user.reload();
         emailVerified = user.emailVerified;
         console.log('Checking email verification status:', emailVerified);
       }
@@ -179,6 +182,19 @@ const SignupPage = () => {
     clearFormDataCookie();
   }, []);
 
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+  
+    const phoneNumber = value.replace(/[^\d]/g, '');
+  
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  };
+
   return (
     <div className="signupPage">
       <h2>Sign Up</h2>
@@ -221,31 +237,30 @@ const SignupPage = () => {
           type="tel"
           value={phoneNumber}
           onChange={(e) => {
-            setPhoneNumber(e.target.value);
-            saveFieldToCookie('phoneNumber', e.target.value);
+            const formattedPhoneNumber = formatPhoneNumber(e.target.value);
+            setPhoneNumber(formattedPhoneNumber);
+            saveFieldToCookie('phoneNumber', formattedPhoneNumber);
           }}
           required
         />
-
-        <label>School: </label>
-        <input
-          type="text"
-          value={school}
-          onChange={(e) => {
-            setSchool(e.target.value);
-            saveFieldToCookie('school', e.target.value);
-          }}
-          required
-        />
-        {/* {showDropdown && (
-          <ul className="dropdown">
-            {filteredSchools.map((school, index) => (
-              <li key={index} onClick={() => handleSchoolSelect(school)}>
-                {school}
-              </li>
-            ))}
-          </ul>
-        )} */}
+        <div className="dropdown-container">
+          <label>School: </label>
+          <input
+            type="text"
+            value={school}
+            onChange={handleSchoolChange}
+            required
+          />
+          {showDropdown && (
+            <ul className="dropdown">
+              {filteredSchools.map((school, index) => (
+                <li key={index} onClick={() => handleSchoolSelect(school)}>
+                  {school}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <label>Are you signing up as a driver? </label>
         <select

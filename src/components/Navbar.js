@@ -154,7 +154,13 @@ const Navbar = () => {
               width: 40,
               height: 40,
             }}>
-            <Avatar alt={user.displayName} src={getProfilePictureUrl()} sx={{ width: 40, height: 40 }}/>
+            <Avatar 
+              alt={user.displayName} 
+              src={getProfilePictureUrl()} 
+              sx={{ width: 40, height: 40 }}
+            >
+              
+            </Avatar>
           </IconButton>
         )}
         <Menu
