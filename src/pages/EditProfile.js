@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/EditProfile.css';
@@ -24,6 +24,16 @@ const SignupPage = () => {
   const [carPlate, setCarPlate] = useState('');
   const [authCode, setAuthCode] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const code = params.get('code');
+    if (code) {
+      console.log('Auth code extracted from URL:', code); // Debugging
+      setAuthCode(code);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
