@@ -1,7 +1,7 @@
 /* global paypal */
 import { useEffect } from 'react';
 
-function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
+function PayPalLoginButton({ onAuthCodeReceived }) {
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://www.paypalobjects.com/js/external/api.js';
@@ -33,7 +33,7 @@ function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
       });
     };
     document.body.appendChild(script);
-  }, [onAuthCodeReceived, userInfo]);
+  }, [onAuthCodeReceived]);
 
   return <span id="linkPayPal" />;
 }

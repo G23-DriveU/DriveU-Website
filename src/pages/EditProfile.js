@@ -112,6 +112,8 @@ const SignupPage = () => {
         authCode: driver === 'yes' ? authCode : '',
       }).toString();
 
+      console.log('Query params:', queryParams); // Debugging
+
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
       const url = `${backendUrl}/users?${queryParams}`;
       console.log('Sending POST request to:', url);
@@ -314,17 +316,6 @@ const SignupPage = () => {
               setAuthCode(code);
             }}
             // onAuthCodeReceived={setAuthCode}
-            userInfo={{
-              email,
-              password,
-              name,
-              phoneNumber,
-              school,
-              carMake,
-              carModel,
-              carColor,
-              carPlate,
-            }}
           />
         )}
         {driver === 'yes' && authCode && <p>PayPal linked successfully!</p>}
