@@ -89,6 +89,7 @@ const SignupPage = () => {
 
   const handleSchoolSelect = (school) => {
     setSchool(school);
+    saveFieldToCookie('school', school);
     setFilteredSchools([]);
     setShowDropdown(false);
   };
@@ -248,7 +249,10 @@ const SignupPage = () => {
           <input
             type="text"
             value={school}
-            onChange={handleSchoolChange}
+            onChange={(e) => {
+              handleSchoolChange(e);
+              saveFieldToCookie('school', e.target.value);
+            }}
             required
           />
           {showDropdown && (
