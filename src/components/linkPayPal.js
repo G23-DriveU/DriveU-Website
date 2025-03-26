@@ -1,22 +1,6 @@
 /* global paypal */
 import { useEffect } from 'react';
 
-// const saveFormDataToCookie = (userInfo) => {
-//   const formData = {
-//     firebaseUid: userInfo.firebaseUid,
-//     name: userInfo.name,
-//     email: userInfo.email,
-//     phoneNumber: userInfo.phoneNumber,
-//     school: userInfo.school,
-//     driver: userInfo.driver,
-//     carMake: userInfo.carMake,
-//     carModel: userInfo.carModel,
-//     carColor: userInfo.carColor,
-//     carPlate: userInfo.carPlate,
-//   };
-//   document.cookie = `formData=${encodeURIComponent(JSON.stringify(formData))}; path=/;`;
-// };
-
 function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
   useEffect(() => {
     const script = document.createElement('script');
@@ -39,8 +23,10 @@ function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
           nonce: '111111',
           onComplete: function(data) {
             if (data && data.auth_code) {
-              // saveFormDataToCookie(userInfo);
+              console.log('PayPal auth code:', data.auth_code);
               onAuthCodeReceived(data.auth_code);
+            } else {
+              console.error('PayPal auth code not received:', data);
             }
           }
         });

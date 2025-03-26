@@ -114,7 +114,7 @@ const SignupPage = () => {
 
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
       const url = `${backendUrl}/users?${queryParams}`;
-      // console.log('Sending POST request to:', url);
+      console.log('Sending POST request to:', url);
 
       const response = await axios.post(url);
       if (response.status === 201) {
@@ -328,7 +328,7 @@ const SignupPage = () => {
         )}
         {driver === 'yes' && authCode && <p>PayPal linked successfully!</p>}
 
-        <button type="submit" /*disabled={driver === 'yes' && !authCode}*/>
+        <button type="submit" disabled={driver === 'yes' && !authCode}>
           Sign Up
         </button>
       </form>
