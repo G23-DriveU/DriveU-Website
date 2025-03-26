@@ -1,6 +1,22 @@
 /* global paypal */
 import { useEffect } from 'react';
 
+// const saveFormDataToCookie = (userInfo) => {
+//   const formData = {
+//     firebaseUid: userInfo.firebaseUid,
+//     name: userInfo.name,
+//     email: userInfo.email,
+//     phoneNumber: userInfo.phoneNumber,
+//     school: userInfo.school,
+//     driver: userInfo.driver,
+//     carMake: userInfo.carMake,
+//     carModel: userInfo.carModel,
+//     carColor: userInfo.carColor,
+//     carPlate: userInfo.carPlate,
+//   };
+//   document.cookie = `formData=${encodeURIComponent(JSON.stringify(formData))}; path=/;`;
+// };
+
 function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
   useEffect(() => {
     const script = document.createElement('script');
@@ -19,20 +35,11 @@ function PayPalLoginButton({ onAuthCodeReceived, userInfo }) {
           buttonShape: 'pill',
           buttonSize: 'sm',
           fullPage: 'false',
-          //returnurl: 'https://driveu.online/editprofile',
+          returnurl: 'https://driveu.online/editprofile',
           nonce: '111111',
           onComplete: function(data) {
             if (data && data.auth_code) {
-              localStorage.setItem('firebaseUid', userInfo.firebaseUid);
-              localStorage.setItem('name', userInfo.name);
-              localStorage.setItem('email', userInfo.email);
-              localStorage.setItem('phoneNumber', userInfo.phoneNumber);
-              localStorage.setItem('school', userInfo.school);
-              localStorage.setItem('driver', userInfo.driver);
-              localStorage.setItem('carMake', userInfo.carMake);
-              localStorage.setItem('carModel', userInfo.carModel);
-              localStorage.setItem('carColor', userInfo.carColor);
-              localStorage.setItem('carPlate', userInfo.carPlate);
+              // saveFormDataToCookie(userInfo);
               onAuthCodeReceived(data.auth_code);
             }
           }

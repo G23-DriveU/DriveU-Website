@@ -4,7 +4,7 @@ import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/EditProfile.css';
 import vehicleModels from '../data/vehicle_models_cleaned.json';
-import universityNames from '../data/us_institutions.json';
+// import universityNames from '../data/us_institutions.json';
 import PayPalLoginButton from '../components/linkPayPal';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
@@ -14,8 +14,8 @@ const SignupPage = () => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [school, setSchool] = useState('');
-  const [filteredSchools, setFilteredSchools] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
+  // const [filteredSchools, setFilteredSchools] = useState([]);
+  // const [showDropdown, setShowDropdown] = useState(false);
   const [driver, setDriver] = useState('');
   const [carMake, setCarMake] = useState('');
   const [carModel, setCarModel] = useState('');
@@ -34,26 +34,26 @@ const SignupPage = () => {
     }
   }, [carMake]);
 
-  const handleSchoolChange = (e) => {
-    const value = e.target.value;
-    setSchool(value);
-    if (value) {
-      const filtered = universityNames.filter((name) =>
-        typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredSchools(filtered);
-      setShowDropdown(true);
-    } else {
-      setFilteredSchools([]);
-      setShowDropdown(false);
-    }
-  };
+  // const handleSchoolChange = (e) => {
+  //   const value = e.target.value;
+  //   setSchool(value);
+  //   if (value) {
+  //     const filtered = universityNames.filter((name) =>
+  //       typeof name === 'string' && name.toLowerCase().includes(value.toLowerCase())
+  //     );
+  //     setFilteredSchools(filtered);
+  //     setShowDropdown(true);
+  //   } else {
+  //     setFilteredSchools([]);
+  //     setShowDropdown(false);
+  //   }
+  // };
 
-  const handleSchoolSelect = (school) => {
-    setSchool(school);
-    setFilteredSchools([]);
-    setShowDropdown(false);
-  };
+  // const handleSchoolSelect = (school) => {
+  //   setSchool(school);
+  //   setFilteredSchools([]);
+  //   setShowDropdown(false);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,6 +94,44 @@ const SignupPage = () => {
     }
   };
 
+  const saveFieldToCookie = (fieldName, value) => {
+    const cookies = document.cookie.split('; ');
+    const formDataCookie = cookies.find((cookie) => cookie.startsWith('formData='));
+    let formData = {};
+    if (formDataCookie) {
+      formData = JSON.parse(decodeURIComponent(formDataCookie.split('=')[1]));
+    }
+    formData[fieldName] = value;
+    document.cookie = `formData=${encodeURIComponent(JSON.stringify(formData))}; path=/;`;
+  };
+
+  const loadFormDataFromCookie = () => {
+    const cookies = document.cookie.split('; ');
+    const formDataCookie = cookies.find((cookie) => cookie.startsWith('formData='));
+    if (formDataCookie) {
+      const formData = JSON.parse(decodeURIComponent(formDataCookie.split('=')[1]));
+      setEmail(formData.email || '');
+      setPassword(formData.password || '');
+      setName(formData.name || '');
+      setPhoneNumber(formData.phoneNumber || '');
+      setSchool(formData.school || '');
+      setDriver(formData.driver || '');
+      setCarMake(formData.carMake || '');
+      setCarModel(formData.carModel || '');
+      setCarColor(formData.carColor || '');
+      setCarPlate(formData.carPlate || '');
+    }
+  };
+  
+  const clearFormDataCookie = () => {
+    document.cookie = 'formData=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+  };
+
+  useEffect(() => {
+    loadFormDataFromCookie();
+    clearFormDataCookie();
+  }, []);
+
   return (
     <div className="signupPage">
       <h2>Sign Up</h2>
@@ -102,7 +140,10 @@ const SignupPage = () => {
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            saveFieldToCookie('email', e.target.value);
+          }}
           required
         />
 
@@ -110,7 +151,10 @@ const SignupPage = () => {
         <input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            saveFieldToCookie('password', e.target.value);
+          }}
           required
         />
 
@@ -118,7 +162,10 @@ const SignupPage = () => {
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            saveFieldToCookie('name', e.target.value);
+          }}
           required
         />
 
@@ -126,7 +173,10 @@ const SignupPage = () => {
         <input
           type="tel"
           value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
+          onChange={(e) => {
+            setPhoneNumber(e.target.value);
+            saveFieldToCookie('phoneNumber', e.target.value);
+          }}
           required
         />
 
@@ -134,10 +184,13 @@ const SignupPage = () => {
         <input
           type="text"
           value={school}
-          onChange={handleSchoolChange}
+          onChange={(e) => {
+            setSchool(e.target.value);
+            saveFieldToCookie('school', e.target.value);
+          }}
           required
         />
-        {showDropdown && (
+        {/* {showDropdown && (
           <ul className="dropdown">
             {filteredSchools.map((school, index) => (
               <li key={index} onClick={() => handleSchoolSelect(school)}>
@@ -145,12 +198,15 @@ const SignupPage = () => {
               </li>
             ))}
           </ul>
-        )}
+        )} */}
 
         <label>Are you signing up as a driver? </label>
         <select
           value={driver}
-          onChange={(e) => setDriver(e.target.value)}
+          onChange={(e) => {
+            setDriver(e.target.value);
+            saveFieldToCookie('driver', e.target.value);
+          }}
           required
         >
           <option value="">Select</option>
@@ -161,7 +217,13 @@ const SignupPage = () => {
         {driver === 'yes' && (
           <>
             <label>Car Make: </label>
-            <select value={carMake} onChange={(e) => setCarMake(e.target.value)} required>
+            <select 
+              value={carMake} 
+              onChange={(e) => {
+                setCarMake(e.target.value);
+                saveFieldToCookie('carMake', e.target.value);
+              }} 
+              required>
               <option value="">Select Car Make</option>
               {vehicleModels.map((make) => (
                 <option key={make.Make} value={make.Make}>
@@ -171,7 +233,13 @@ const SignupPage = () => {
             </select>
 
             <label>Car Model: </label>
-            <select value={carModel} onChange={(e) => setCarModel(e.target.value)} required>
+            <select 
+              value={carModel} 
+              onChange={(e) => {
+                setCarModel(e.target.value);
+                saveFieldToCookie('carModel', e.target.value);
+              }} 
+              required>
               <option value="">Select Car Model</option>
               {modelOptions.map((model) => (
                 <option key={model} value={model}>
@@ -184,7 +252,10 @@ const SignupPage = () => {
             <input
               type="text"
               value={carColor}
-              onChange={(e) => setCarColor(e.target.value)}
+              onChange={(e) => {
+                setCarColor(e.target.value);
+                saveFieldToCookie('carColor', e.target.value);
+              }}
               required
             />
 
@@ -192,7 +263,10 @@ const SignupPage = () => {
             <input
               type="text"
               value={carPlate}
-              onChange={(e) => setCarPlate(e.target.value)}
+              onChange={(e) => {
+                setCarPlate(e.target.value);
+                saveFieldToCookie('carPlate', e.target.value);
+              }}
               required
             />
           </>
@@ -203,8 +277,9 @@ const SignupPage = () => {
           <PayPalLoginButton
             onAuthCodeReceived={(code) => setAuthCode(code)}
             userInfo={{
-              name,
               email,
+              password,
+              name,
               phoneNumber,
               school,
               carMake,
