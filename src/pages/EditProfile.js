@@ -309,11 +309,11 @@ const SignupPage = () => {
         
         {driver === 'yes' && !authCode && (
           <PayPalLoginButton
-            // onAuthCodeReceived={(code) => {
-            //   console.log('Auth code received:', code);
-            //   setAuthCode(code);
-            // }}
-            onAuthCodeReceived={setAuthCode}
+            onAuthCodeReceived={(code) => {
+              console.log('Auth code received:', code);
+              setAuthCode(code);
+            }}
+            // onAuthCodeReceived={setAuthCode}
             userInfo={{
               email,
               password,
@@ -329,7 +329,7 @@ const SignupPage = () => {
         )}
         {driver === 'yes' && authCode && <p>PayPal linked successfully!</p>}
 
-        <button type="submit" disabled={driver === 'yes' && !authCode}>
+        <button type="submit" /*disabled={driver === 'yes' && !authCode}*/>
           Sign Up
         </button>
       </form>
