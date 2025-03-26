@@ -6,7 +6,7 @@ import '../styles/EditProfile.css';
 import vehicleModels from '../data/vehicle_models_cleaned.json';
 // import universityNames from '../data/us_institutions.json';
 import PayPalLoginButton from '../components/linkPayPal';
-import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -24,6 +24,31 @@ const SignupPage = () => {
   const [carPlate, setCarPlate] = useState('');
   const [authCode, setAuthCode] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && user.emailVerified) {
+        navigate('/');
+      }
+    });
+
+    // Polling mechanism to check email verification status
+    const intervalId = setInterval(async () => {
+      const user = auth.currentUser;
+      if (user) {
+        await user.reload();
+        if (user.emailVerified) {
+          navigate('/');
+          clearInterval(intervalId);
+        }
+      }
+    }, 3000); // Check every 3 seconds
+
+    return () => {
+      unsubscribe();
+      clearInterval(intervalId);
+    };
+  }, [navigate]);
 
   useEffect(() => {
     if (carMake) {
@@ -57,12 +82,21 @@ const SignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Submitting form...');
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       await sendEmailVerification(user);
       alert('Verification email sent! Please verify your email before proceeding.');
+
+      let emailVerified = false;
+      while (!emailVerified) {
+        await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds
+        await user.reload(); // Reload user data from Firebase
+        emailVerified = user.emailVerified;
+        console.log('Checking email verification status:', emailVerified);
+      }
 
       const queryParams = new URLSearchParams({
         firebaseUid: user.uid,
@@ -80,6 +114,7 @@ const SignupPage = () => {
 
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
       const url = `${backendUrl}/users?${queryParams}`;
+      // console.log('Sending POST request to:', url);
 
       const response = await axios.post(url);
       if (response.status === 201) {
@@ -271,11 +306,13 @@ const SignupPage = () => {
             />
           </>
         )}
-
-        <label>Link PayPal: </label>
-        {!authCode && (
+        
+        {driver === 'yes' && !authCode && (
           <PayPalLoginButton
-            onAuthCodeReceived={(code) => setAuthCode(code)}
+            onAuthCodeReceived={(code) => {
+              console.log('Auth code received:', code);
+              setAuthCode(code);
+            }}
             userInfo={{
               email,
               password,
@@ -289,9 +326,9 @@ const SignupPage = () => {
             }}
           />
         )}
-        {authCode && <p>PayPal linked successfully!</p>}
+        {driver === 'yes' && authCode && <p>PayPal linked successfully!</p>}
 
-        <button type="submit" disabled={!authCode}>
+        <button type="submit" /*disabled={driver === 'yes' && !authCode}*/>
           Sign Up
         </button>
       </form>
