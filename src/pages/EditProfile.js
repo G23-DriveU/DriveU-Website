@@ -309,10 +309,11 @@ const SignupPage = () => {
         
         {driver === 'yes' && !authCode && (
           <PayPalLoginButton
-            onAuthCodeReceived={(code) => {
-              console.log('Auth code received:', code);
-              setAuthCode(code);
-            }}
+            // onAuthCodeReceived={(code) => {
+            //   console.log('Auth code received:', code);
+            //   setAuthCode(code);
+            // }}
+            onAuthCodeReceived={setAuthCode}
             userInfo={{
               email,
               password,
