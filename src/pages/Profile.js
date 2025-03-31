@@ -23,6 +23,7 @@ const Profile = () => {
   const [userId, setUserId] = useState(null);
   const [filteredSchools, setFilteredSchools] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [rawPhoneNumber, setRawPhoneNumber] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -39,14 +40,19 @@ const Profile = () => {
           const userId = response.data.user.id;
           setUserId(userId);
 
-          console.log('API response:', response.data); // Debugging
-          console.log('User ID:', userId); // Debugging
+          // console.log('API response:', response.data); // Debugging
+          // console.log('User ID:', userId); // Debugging
           if (response.data.user) {
+            const rawPhone = response.data.user.phoneNumber || '';
+            const formattedPhone = formatPhoneNumber(rawPhone);
+            
             setUserData(response.data.user);
             setFormData({
               ...response.data.user,
+              phoneNumber: formattedPhone,
               driver: response.data.user.driver ? 'yes' : 'no',
             });
+            setRawPhoneNumber(rawPhone);
           } else {
             console.error('User data not found');
           }
@@ -70,14 +76,16 @@ const Profile = () => {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
+  
     setFormData({
       ...userData,
+      phoneNumber: formatPhoneNumber(userData.phoneNumber),
       driver: userData.driver ? 'yes' : 'no',
     });
   };
 
   const formatPhoneNumber = (value) => {
-    if (!value) return value;
+    if (!value) return '';
 
     const phoneNumber = value.replace(/[^\d]/g, '');
   
@@ -94,7 +102,7 @@ const Profile = () => {
       const queryParams = new URLSearchParams({
         userId: userId,
         name: formData.name,
-        phoneNumber: formData.phoneNumber,
+        phoneNumber: rawPhoneNumber,
         school: formData.school,
         driver: formData.driver === 'yes' ? 'true' : 'false',
       });
@@ -106,11 +114,11 @@ const Profile = () => {
         queryParams.append('carModel', formData.carModel);
       }
 
-      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams.toString()}`;
-      console.log('Request URL:', requestUrl); // Debugging
+      // const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams.toString()}`;
+      // console.log('Request URL:', requestUrl); // Debugging
 
-      const response = await axios.put(requestUrl);
-      console.log('Save response:', response.data); // Debugging
+      // const response = await axios.put(requestUrl);
+      // console.log('Save response:', response.data); // Debugging
 
       setUserData({
         ...formData,
@@ -124,17 +132,28 @@ const Profile = () => {
       setIsEditing(false);
     } catch (error) {
       console.error('Error saving user data:', error);
-      console.log('Driver status:', formData.driver === 'yes'); // Debugging
+      // console.log('Driver status:', formData.driver === 'yes'); // Debugging
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
   
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: name === 'phoneNumber' ? formatPhoneNumber(value) : value,
-    }));
+    if (name === 'phoneNumber') {
+      const rawNumber = value.replace(/[^\d]/g, '');
+      const formattedNumber = formatPhoneNumber(rawNumber);
+  
+      setRawPhoneNumber(rawNumber);
+      setFormData((prevData) => ({
+        ...prevData,
+        phoneNumber: formattedNumber,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSchoolChange = (e) => {
@@ -295,7 +314,7 @@ const Profile = () => {
         ) : (
           <>
             <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Phone Number:</strong> {userData.phoneNumber}</p>
+            <p><strong>Phone Number:</strong> {formData.phoneNumber}</p>
             <p><strong>School:</strong> {userData.school}</p>
             <p><strong>Driver:</strong> {userData.driver ? 'Yes' : 'No'}</p>
             {userData.driver && (
