@@ -129,7 +129,7 @@ const Navbar = () => {
         {!user && (
           <Button
             component={Link}
-            to="/editprofile"
+            to="/signup"
             sx={{
               background: 'linear-gradient(to right,rgb(222, 95, 236),rgb(241, 239, 90))',
               borderRadius: '20px',

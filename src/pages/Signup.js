@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { auth } from '../firebase';
-import '../styles/EditProfile.css';
+import '../styles/Signup.css';
 import vehicleModels from '../data/vehicle_models_cleaned.json';
 import universityNames from '../data/us_institutions.json';
 import PayPalLoginButton from '../components/linkPayPal';
