@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import '../styles/Login.css';
@@ -43,6 +43,9 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <Link to="/forgotpassword" className="forgot-password-link">
+          Forgot Password?
+        </Link>
         <button id="login" type="submit">Login</button>
       </form>
     </div>

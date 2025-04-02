@@ -19,7 +19,7 @@ function PayPalLoginButton({ onAuthCodeReceived }) {
           buttonShape: 'pill',
           buttonSize: 'sm',
           fullPage: 'false',
-          returnurl: 'https://driveu.online/editprofile',
+          returnurl: 'https://driveu.online/signup',
           nonce: '111111',
           onComplete: function(data) {
             if (data && data.auth_code) {
