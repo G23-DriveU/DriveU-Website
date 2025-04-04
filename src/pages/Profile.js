@@ -114,9 +114,10 @@ const Profile = () => {
         queryParams.append('carModel', formData.carModel);
       }
 
-      // const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams.toString()}`;
+      const requestUrl = `${process.env.REACT_APP_BACKEND_URL}/users?${queryParams.toString()}`;
       // console.log('Request URL:', requestUrl); // Debugging
-
+      
+      await axios.put(requestUrl);
       // const response = await axios.put(requestUrl);
       // console.log('Save response:', response.data); // Debugging
 
@@ -194,7 +195,6 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        {/* <img src={getProfilePictureUrl()} alt="Profile" className="profile-picture" /> */}
         <Avatar
           alt={userData.name}
           src={getProfilePictureUrl()}

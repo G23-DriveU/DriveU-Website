@@ -43,3 +43,21 @@
     height: auto;
 }
 
+.home-banner {
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+}
+
+.bottom img {
+    width: 100px;
+    height: auto;
+    margin: 10px;
+}
+  
+.c1 img,
+.c2 img,
+.c3 img {
+    max-width: 120px;
+    height: auto;
+}
