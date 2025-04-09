@@ -5,6 +5,9 @@
   background: linear-gradient(to bottom, #c7f9ff, #c8e0ff);
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile-header {
@@ -13,7 +16,7 @@
   text-align: center;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .profile-picture {
@@ -25,8 +28,8 @@
 }
 
 .profile-header h2 {
-  flex-grow: 1;
-  margin-left: 20px;
+  /* flex-grow: 1; */
+  /* margin-left: 20px; */
   font-size: 2em;
   color: #333;
 }
@@ -38,6 +41,7 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  width: auto;
 }
 
 .edit-button:hover {
@@ -47,6 +51,7 @@
 .profile-details {
   font-size: 1.2em;
   color: #333;
+  width: 70%;
 }
 
 .profile-details label {
@@ -62,6 +67,23 @@
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.profile-details p {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.profile-details strong {
+  flex-shrink: 0;
+  color: #333;
+}
+
+.profile-details span {
+  text-align: right;
+  color: #555;
 }
 
 #save {

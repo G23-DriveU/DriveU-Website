@@ -203,7 +203,9 @@ const Profile = () => {
           {userData.name?.charAt(0)}
         </Avatar>
         <h2>{userData.name}</h2>
-        <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
+        {!isEditing && ( // Only show the button when not editing
+          <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
+        )}
       </div>
       <div className="profile-details">
         {isEditing ? (
@@ -314,17 +316,41 @@ const Profile = () => {
         ) : (
           <>
             <h3><strong>User Information</strong></h3>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Phone Number:</strong> {formData.phoneNumber}</p>
-            <p><strong>School:</strong> {userData.school}</p>
-            <p><strong>Driver:</strong> {userData.driver ? 'Yes' : 'No'}</p>
+            <p>
+              <strong>Email:</strong>
+              <span>{userData.email}</span>
+            </p>
+            <p>
+              <strong>Phone Number:</strong>
+              <span>{formData.phoneNumber}</span>
+            </p>
+            <p>
+              <strong>School:</strong>
+              <span>{userData.school}</span>
+            </p>
+            <p>
+              <strong>Driver:</strong>
+              <span>{userData.driver ? 'Yes' : 'No'}</span>
+            </p>
             {userData.driver && (
               <>
                 <h3><strong>Vehicle Details</strong></h3>
-                <p><strong>Car Make:</strong> {userData.carMake}</p>
-                <p><strong>Car Model:</strong> {userData.carModel}</p>
-                <p><strong>Car Color:</strong> {userData.carColor}</p>
-                <p><strong>Car Plate:</strong> {userData.carPlate}</p>
+                <p>
+                  <strong>Car Make:</strong>
+                  <span>{userData.carMake}</span>
+                </p>
+                <p>
+                  <strong>Car Model:</strong>
+                  <span>{userData.carModel}</span>
+                </p>
+                <p>
+                  <strong>Car Color:</strong>
+                  <span>{userData.carColor}</span>
+                </p>
+                <p>
+                  <strong>Car Plate:</strong>
+                  <span>{userData.carPlate}</span>
+                </p>
               </>
             )}
           </>
