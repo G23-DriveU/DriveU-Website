@@ -19,6 +19,9 @@ h1, h2 {
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .trip-item p {
@@ -28,4 +31,15 @@ h1, h2 {
 
 .trip-item strong {
     color: #333;
+}
+
+.trip-popover > p {
+    text-align: left;
+}
+
+.MuiIconButton-root {
+    padding: 4px;
+    width: auto;
+    height: auto;
+    margin-left: 20px;
 }

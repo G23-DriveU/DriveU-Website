@@ -313,12 +313,14 @@ const Profile = () => {
           </>
         ) : (
           <>
+            <h3><strong>User Information</strong></h3>
             <p><strong>Email:</strong> {userData.email}</p>
             <p><strong>Phone Number:</strong> {formData.phoneNumber}</p>
             <p><strong>School:</strong> {userData.school}</p>
             <p><strong>Driver:</strong> {userData.driver ? 'Yes' : 'No'}</p>
             {userData.driver && (
               <>
+                <h3><strong>Vehicle Details</strong></h3>
                 <p><strong>Car Make:</strong> {userData.carMake}</p>
                 <p><strong>Car Model:</strong> {userData.carModel}</p>
                 <p><strong>Car Color:</strong> {userData.carColor}</p>

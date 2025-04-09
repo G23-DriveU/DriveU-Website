@@ -1,8 +1,8 @@
 .driver {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 .driver > p {
@@ -26,3 +26,7 @@
   height: auto;
 }
 
+.signupbox {
+  background-color: rgb(255, 222, 89);
+  width: 100%;
+}

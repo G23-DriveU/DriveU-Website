@@ -9,7 +9,7 @@ const Home = () => {
     return (  
         <div className="home">
             <img src={driveImage} alt="DriveU" className="driveu" />
-            <h2>Where <span className="teal-text">carpools</span> meets pleasure</h2>
+            <h2>Where <span className="teal-text">carpools</span> meet convenience</h2>
             <h3>We are here to create innovative carpool experiences for college students.</h3>
             <img src={homeBanner} alt="DriveU" className="home-banner"/>
             <div className="signupbox">
