@@ -198,7 +198,7 @@ const Profile = () => {
         <Avatar
           alt={userData.name}
           src={getProfilePictureUrl()}
-          sx={{ width: 100, height: 100 }}
+          sx={{ width: 150, height: 150 }}
         >
           {userData.name?.charAt(0)}
         </Avatar>

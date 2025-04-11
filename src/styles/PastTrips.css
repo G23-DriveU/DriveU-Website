@@ -43,3 +43,12 @@ h1, h2 {
     height: auto;
     margin-left: 20px;
 }
+
+.no-trips-found {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.2em;
+}

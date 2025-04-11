@@ -48,8 +48,8 @@ const PastTrips = () => {
 
           setRiderTrips(response.data.riderTrips || []);
           setDriverTrips(response.data.driverTrips || []);
-          console.log('Rider Trips:', response.data.riderTrips); // Debugging
-          console.log('Driver Trips:', response.data.driverTrips); // Debugging
+          // console.log('Rider Trips:', response.data.riderTrips); // Debugging
+          // console.log('Driver Trips:', response.data.driverTrips); // Debugging
         } catch (error) {
           console.error('Error fetching past trips:', error);
         }
@@ -74,7 +74,7 @@ const PastTrips = () => {
   };
 
   if (driverTrips.length === 0 && riderTrips.length === 0) {
-    return <div>No trips found.</div>;
+    return <div className="no-trips-found"><strong>No trips found.</strong></div>;
   }
 
   const getProfilePictureUrl = () => {

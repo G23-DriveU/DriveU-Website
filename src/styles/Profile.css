@@ -35,7 +35,8 @@
 }
 
 .edit-button {
-  background-color: #4CAF50;
+  background-color: #009688;
+  border-color: white;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -45,7 +46,7 @@
 }
 
 .edit-button:hover {
-  background-color: #45a049;
+  background-color: #117916;
 }
 
 .profile-details {

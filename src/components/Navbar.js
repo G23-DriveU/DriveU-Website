@@ -155,7 +155,7 @@ const Navbar = () => {
               height: 40,
             }}>
             <Avatar 
-              alt={user.displayName} 
+              alt={user.name} 
               src={getProfilePictureUrl()} 
               sx={{ width: 40, height: 40 }}
             >
@@ -170,7 +170,7 @@ const Navbar = () => {
         >
           <MenuItem onClick={() => handleMenuItemClick('/profile')}>Profile</MenuItem>
           <MenuItem onClick={() => handleMenuItemClick('/pasttrips')}>Past Trips</MenuItem>
-          <MenuItem onClick={() => { handleLogout(); handleMenuClose(); }}>Logout</MenuItem>
+          <MenuItem onClick={() => { handleLogout(); handleMenuClose(); }}>Sign Out</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

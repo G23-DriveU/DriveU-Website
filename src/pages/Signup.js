@@ -24,6 +24,8 @@ const Signup = () => {
   const [carColor, setCarColor] = useState('');
   const [carPlate, setCarPlate] = useState('');
   const [authCode, setAuthCode] = useState('');
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -97,7 +99,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Submitting form...');
+    // console.log('Submitting form...');
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -110,7 +112,12 @@ const Signup = () => {
         await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for 3 seconds
         await user.reload();
         emailVerified = user.emailVerified;
-        console.log('Checking email verification status:', emailVerified);
+        // console.log('Checking email verification status:', emailVerified);
+      }
+
+      let base64Image = '';
+      if (profilePicture) {
+        base64Image = await convertFileToBase64(profilePicture);
       }
 
       const queryParams = new URLSearchParams({
@@ -127,22 +134,54 @@ const Signup = () => {
         authCode: driver === 'yes' ? authCode : '',
       }).toString();
 
+      const profilePicPayload = {
+        firebaseUid: user.uid,
+        profilePic: base64Image,
+      };
+      
+      const backendURL = process.env.REACT_APP_BACKEND_URL;
       // console.log('Query params:', queryParams); // Debugging
-
-      const backendUrl = process.env.REACT_APP_BACKEND_URL;
-      const url = `${backendUrl}/users?${queryParams}`;
-      console.log('Sending POST request to:', url);
+      
+      const url = `${backendURL}/users?${queryParams}`;
+      // console.log('Sending POST request to:', url);
 
       const response = await axios.post(url);
       if (response.status === 201) {
-        console.log('User profile saved successfully');
+        // console.log('User profile saved successfully');
         navigate('/');
       } else {
         console.error('Failed to save user profile');
       }
+
+      const response2 = await axios.post(`${backendURL}/profilePic`, profilePicPayload);
+      if (response2.status === 200) {
+        // console.log('Profile picture saved successfully');
+      } else {
+        console.error('Failed to save profile picture');
+      }
     } catch (error) {
-      console.error('Error during signup:', error);
+      console.error('Error during signup: ', error);
       alert(error.message);
+    }
+      
+      
+    
+  };
+
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleProfilePictureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
   };
 
@@ -154,7 +193,11 @@ const Signup = () => {
       formData = JSON.parse(decodeURIComponent(formDataCookie.split('=')[1]));
     }
     formData[fieldName] = value;
-    document.cookie = `formData=${encodeURIComponent(JSON.stringify(formData))}; path=/;`;
+
+    const expirationDate = new Date();
+    expirationDate.setMinutes(expirationDate.getMinutes() + 10);
+
+    document.cookie = `formData=${encodeURIComponent(JSON.stringify(formData))}; path=/; expires=${expirationDate.toUTCString()};`;
   };
 
   const loadFormDataFromCookie = () => {
@@ -209,51 +252,58 @@ const Signup = () => {
 
   return (
     <div className="signupPage">
-      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit} className="form-container">
-        <label>Email: </label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            saveFieldToCookie('email', e.target.value);
-          }}
-          required
-        />
+        <h2>Sign Up</h2>
 
-        <label>Password: </label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            saveFieldToCookie('password', e.target.value);
-          }}
-          required
-        />
-
-        <label>Name: </label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            saveFieldToCookie('name', e.target.value);
-          }}
-          required
-        />
-
-        <label>Phone Number: </label>
-        <input
-          type="tel"
-          value={phoneNumber}
-          onChange={handlePhoneNumberChange}
-          required
-        />
-        <div className="dropdown-container">
-          <label>School: </label>
+        <div className="section">
+          <h3 className="section-heading">Personal Information</h3>
+          <label>Email:</label>
           <input
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              saveFieldToCookie('email', e.target.value);
+            }}
+            required
+          />
+  
+          <label>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              saveFieldToCookie('password', e.target.value);
+            }}
+            required
+          />
+  
+          <label>Full Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              saveFieldToCookie('name', e.target.value);
+            }}
+            required
+          />
+  
+          <label>Phone Number:</label>
+          <input
+            type="tel"
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
+            required
+          />
+        </div>
+
+        <div className="section">
+          <h3 className="section-heading">School Information</h3>
+          <label>School:</label>
+          <input
+            className="school-input"
             type="text"
             value={school}
             onChange={(e) => {
@@ -263,40 +313,60 @@ const Signup = () => {
             required
           />
           {showDropdown && (
-            <ul className="dropdown">
-              {filteredSchools.map((school, index) => (
-                <li key={index} onClick={() => handleSchoolSelect(school)}>
-                  {school}
-                </li>
-              ))}
-            </ul>
+            <div className="dropdown-container">
+              <ul className="dropdown">
+                {filteredSchools.map((school, index) => (
+                  <li key={index} onClick={() => handleSchoolSelect(school)}>
+                    {school}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 
-        <label>Are you signing up as a driver? </label>
-        <select
-          value={driver}
-          onChange={(e) => {
-            setDriver(e.target.value);
-            saveFieldToCookie('driver', e.target.value);
-          }}
-          required
-        >
-          <option value="">Select</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
+        <div className="section">
+          <h3 className="section-heading">Signup as a Driver?</h3>
+          <label>
+            <input
+              type="radio"
+              name="driver"
+              value="yes"
+              checked={driver === 'yes'}
+              onChange={(e) => {
+                setDriver(e.target.value);
+                saveFieldToCookie('driver', e.target.value);
+              }}
+            />
+            Yes
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="driver"
+              value="no"
+              checked={driver === 'no'}
+              onChange={(e) => {
+                setDriver(e.target.value);
+                saveFieldToCookie('driver', e.target.value);
+              }}
+            />
+            No
+          </label>
+        </div>
 
         {driver === 'yes' && (
-          <>
-            <label>Car Make: </label>
-            <select 
-              value={carMake} 
+          <div className="section">
+            <h3 className="section-heading">Driver Information</h3>
+            <label>Car Make:</label>
+            <select
+              value={carMake}
               onChange={(e) => {
                 setCarMake(e.target.value);
                 saveFieldToCookie('carMake', e.target.value);
-              }} 
-              required>
+              }}
+              required
+            >
               <option value="">Select Car Make</option>
               {vehicleModels.map((make) => (
                 <option key={make.Make} value={make.Make}>
@@ -304,15 +374,16 @@ const Signup = () => {
                 </option>
               ))}
             </select>
-
-            <label>Car Model: </label>
-            <select 
-              value={carModel} 
+  
+            <label>Car Model:</label>
+            <select
+              value={carModel}
               onChange={(e) => {
                 setCarModel(e.target.value);
                 saveFieldToCookie('carModel', e.target.value);
-              }} 
-              required>
+              }}
+              required
+            >
               <option value="">Select Car Model</option>
               {modelOptions.map((model) => (
                 <option key={model} value={model}>
@@ -320,8 +391,8 @@ const Signup = () => {
                 </option>
               ))}
             </select>
-
-            <label>Car Color: </label>
+  
+            <label>Car Color:</label>
             <input
               type="text"
               value={carColor}
@@ -331,8 +402,8 @@ const Signup = () => {
               }}
               required
             />
-
-            <label>Car Plate: </label>
+  
+            <label>Car Plate:</label>
             <input
               type="text"
               value={carPlate}
@@ -342,23 +413,31 @@ const Signup = () => {
               }}
               required
             />
-          </>
-        )}
-        
-        {driver === 'yes' && !authCode && (
-          <PayPalLoginButton
-            onAuthCodeReceived={(code) => {
-              console.log('Auth code received:', code);
-              setAuthCode(code);
-            }}
-            // onAuthCodeReceived={setAuthCode}
-          />
-        )}
-        {driver === 'yes' && authCode && <p>PayPal linked successfully!</p>}
 
-        <button type="submit" /*disabled={driver === 'yes' && !authCode}*/>
-          Sign Up
-        </button>
+            {driver === 'yes' && !authCode && (
+              <PayPalLoginButton
+                onAuthCodeReceived={(code) => {
+                  // console.log('Auth code received:', code); // Debugging
+                  setAuthCode(code);
+                }}
+              />
+            )}
+            {driver === 'yes' && authCode && <p>PayPal linked successfully!</p>}
+          </div>
+        )}
+  
+        <div className="section">
+          <h3 className="section-heading">Profile Picture</h3>
+          <label>Upload Profile Picture:</label>
+          <input type="file" accept="image/*" onChange={handleProfilePictureChange} />
+          {previewImage && (
+            <div className="image-preview">
+              <img src={previewImage} alt="Profile Preview" />
+            </div>
+          )}
+        </div>
+
+        <button type="submit">Sign Up</button>
       </form>
     </div>
   );
