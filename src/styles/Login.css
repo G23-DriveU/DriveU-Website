@@ -64,6 +64,25 @@
     background-color: #3a8edb;
   }
   
+  .forgot-password {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f9;
+    flex-direction: column;
+  }
+  
+  .forgot-password > .form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 50vw;
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+  }
+
   .forgot-password-link {
     display: block;
     text-align: right;
