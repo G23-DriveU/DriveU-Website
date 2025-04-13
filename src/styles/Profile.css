@@ -136,11 +136,24 @@
 }
 
 .dropdown li {
-  padding: 8px 12px;
+  padding: 10px;
   cursor: pointer;
 }
 
 .dropdown li:hover {
   background-color: #f0f0f0;
+}
+
+.school-input {
+  margin-bottom: 0;
+}
+
+.loading {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.2em;
 }
 

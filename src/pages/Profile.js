@@ -26,8 +26,44 @@ const Profile = () => {
   const [rawPhoneNumber, setRawPhoneNumber] = useState('');
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const user = auth.currentUser;
+    // const fetchUserData = async () => {
+    //   const user = auth.currentUser;
+    //   if (user) {
+    //     setFirebaseUid(user.uid);
+    //     try {
+    //       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`, {
+    //         params: {
+    //           firebaseUid: user.uid,
+    //         },
+    //       });
+
+    //       const userId = response.data.user.id;
+    //       setUserId(userId);
+
+    //       // console.log('API response:', response.data); // Debugging
+    //       // console.log('User ID:', userId); // Debugging
+    //       if (response.data.user) {
+    //         const rawPhone = response.data.user.phoneNumber || '';
+    //         const formattedPhone = formatPhoneNumber(rawPhone);
+            
+    //         setUserData(response.data.user);
+    //         setFormData({
+    //           ...response.data.user,
+    //           phoneNumber: formattedPhone,
+    //           driver: response.data.user.driver ? 'yes' : 'no',
+    //         });
+    //         setRawPhoneNumber(rawPhone);
+    //       } else {
+    //         console.error('User data not found');
+    //       }
+    //     } catch (error) {
+    //       console.error('Error fetching user data:', error);
+    //     }
+    //   }
+    // };
+
+    // fetchUserData();
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setFirebaseUid(user.uid);
         try {
@@ -36,16 +72,14 @@ const Profile = () => {
               firebaseUid: user.uid,
             },
           });
-
+  
           const userId = response.data.user.id;
           setUserId(userId);
-
-          // console.log('API response:', response.data); // Debugging
-          // console.log('User ID:', userId); // Debugging
+  
           if (response.data.user) {
             const rawPhone = response.data.user.phoneNumber || '';
             const formattedPhone = formatPhoneNumber(rawPhone);
-            
+  
             setUserData(response.data.user);
             setFormData({
               ...response.data.user,
@@ -59,10 +93,12 @@ const Profile = () => {
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
+      } else {
+        console.error('No user is signed in');
       }
-    };
-
-    fetchUserData();
+    });
+  
+    return () => unsubscribe();
   }, []);
 
   const getProfilePictureUrl = () => {
@@ -189,7 +225,7 @@ const Profile = () => {
   };
 
   if (!userData) {
-    return <div>Loading...</div>;
+    return <div className="loading"><strong>Loading...</strong></div>;
   }
 
   return (
@@ -203,6 +239,20 @@ const Profile = () => {
           {userData.name?.charAt(0)}
         </Avatar>
         <h2>{userData.name}</h2>
+
+        {userData.driverRating !== 0 && (
+          <div className="rating">
+            <strong>Driver Rating: </strong>
+            <span>{userData.driverRating.toFixed(1)}</span>
+          </div>
+        )}
+        {userData.riderRating !== 0 && (
+          <div className="rating">
+            <strong>Rider Rating: </strong>
+            <span>{userData.riderRating.toFixed(1)}</span>
+          </div>
+        )}
+
         {!isEditing && ( // Only show the button when not editing
           <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
         )}
@@ -242,6 +292,7 @@ const Profile = () => {
               <strong>School:</strong>
               <div className="dropdown-container">
               <input
+                className="school-input"
                 type="text"
                 name="school"
                 value={formData.school}

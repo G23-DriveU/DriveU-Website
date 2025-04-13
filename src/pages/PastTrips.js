@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/PastTrips.css';
-import { Avatar, IconButton } from '@mui/material';
+import { Avatar, IconButton, Rating } from '@mui/material';
 import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 
 const PastTrips = () => {
@@ -12,7 +12,8 @@ const PastTrips = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [firebaseUid, setFirebaseUid] = useState(null);
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  // const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -61,16 +62,11 @@ const PastTrips = () => {
 
   const handleViewDetails = (trip, event) => {
     setSelectedTrip(trip);
-
-    const rect = event.target.getBoundingClientRect();
-    setPopoverPosition({
-      top: rect.top + window.scrollY + rect.height + 10,
-      left: rect.left + rect.width / 2,
-    });
   };
 
   const handleCloseDetails = () => {
     setSelectedTrip(null);
+    setShowRatingModal(false);
   };
 
   if (driverTrips.length === 0 && riderTrips.length === 0) {
@@ -80,6 +76,28 @@ const PastTrips = () => {
   const getProfilePictureUrl = () => {
     if (!firebaseUid) return null;
     return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
+  };
+
+  const handleRate = async (rating) => {
+    try {
+      const isDriver = selectedTrip.driverId === userInfo?.id;
+      const endpoint = isDriver
+        ? `${process.env.REACT_APP_BACKEND_URL}/rateRider`
+        : `${process.env.REACT_APP_BACKEND_URL}/rateDriver`;
+  
+      await axios.post(endpoint, {
+        driverId: isDriver ? selectedTrip.driverId : null,
+        riderId: isDriver ? null : selectedTrip.riderId,
+        rating,
+        tripId: selectedTrip.id,
+      });
+  
+      alert('Rating submitted successfully!');
+      handleCloseDetails();
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+      alert('Failed to submit rating. Please try again.');
+    }
   };
 
   return (
@@ -126,28 +144,33 @@ const PastTrips = () => {
         </>
       )}
       {selectedTrip && (
+        <>
         <div
-          className="trip-popover"
-          style={{
-            position: 'absolute',
-            top: `${popoverPosition.top}px`,
-            left: `${popoverPosition.left}px`,
-            transform: 'translateX(-50%)',
-            backgroundColor: '#fff',
-            border: '1px solid #ddd',
-            borderRadius: '5px',
-            padding: '15px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            zIndex: 1000,
-          }}
-        >
-          <Avatar
-            alt={userInfo.name}
-            src={getProfilePictureUrl()}
-            sx={{ width: 100, height: 100 }}
-          >
-            {userInfo.name?.charAt(0)}
-          </Avatar>
+          className="overlay"
+          onClick={handleCloseDetails}
+        ></div>
+        <div className="trip-popover">
+          <div className="popover-header">
+            <Avatar
+              alt={userInfo.name}
+              src={getProfilePictureUrl()}
+              sx={{ width: 100, height: 100 }}
+            >
+              {userInfo.name?.charAt(0)}
+            </Avatar>
+            <img
+              className="google-maps-preview"
+              src={`https://maps.googleapis.com/maps/api/staticmap?key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}&size=200x100&markers=color:blue|label:S|${encodeURIComponent(
+                selectedTrip.startLocation
+              )}&markers=color:red|label:D|${encodeURIComponent(
+                selectedTrip.destination
+              )}&path=color:0x0000ff|weight:5|${encodeURIComponent(
+                selectedTrip.startLocation
+              )}|${encodeURIComponent(selectedTrip.destination)}`}
+              alt="Route Map"
+            />
+          </div>
+          
           <h3>Trip Details</h3>
           <p><strong>Start Location:</strong> {selectedTrip.startLocation}</p>
           <p><strong>Destination:</strong> {selectedTrip.destination}</p>
@@ -160,21 +183,41 @@ const PastTrips = () => {
                   ? `${userInfo.carMake} ${userInfo.carModel}`
                   : 'Unknown Car'}
               </p>
+              <p><strong>You Made:</strong> {"$" + selectedTrip.driverPayout || '0'}</p>
+              <button
+                disabled={selectedTrip.driverRated}
+                onClick={() => setShowRatingModal(true)}
+              >
+                Rate
+              </button>
             </>
           ) : (
             <>
               <p><strong>Driver:</strong> {selectedTrip.driver?.name || 'N/A'}</p>
               <p><strong>Car:</strong> {selectedTrip.driver.carMake + " " + selectedTrip.driver.carModel}</p>
+              <p><strong>This Ride Cost You:</strong> {"$" + (selectedTrip.riderCost || '0').toFixed(2)}</p>
+              <button
+                disabled={selectedTrip.riderRated}
+                onClick={() => setShowRatingModal(true)}
+              >
+                Rate
+              </button>
             </>
           )}
-          {/* <p><strong>Car:</strong> {selectedTrip.carMake + " " + selectedTrip.carModel}</p> */}
-          {selectedTrip.driverId === userInfo?.id && (
-            <p><strong>You Made:</strong> {"$" + selectedTrip.driverPayout || '0'}</p>
+          {showRatingModal && (
+            <div className="rating-modal">
+              <h3>Rate Your {selectedTrip.driverId === userInfo?.id ? 'Rider' : 'Driver'}</h3>
+              <Rating
+                name="trip-rating"
+                precision={0.5}
+                onChange={(event, value) => handleRate(value)}
+              />
+              <button onClick={() => setShowRatingModal(false)}>Cancel</button>
+            </div>
           )}
-          
-          {/* <p><strong>You Drove:</strong> {selectedTrip.time}</p> */}
           <button onClick={handleCloseDetails} style={{ marginTop: '10px' }}>Close</button>
         </div>
+        </>
       )}
     </div>
   );
