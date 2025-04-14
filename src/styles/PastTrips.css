@@ -3,6 +3,10 @@
     /* font-family: Arial, sans-serif; */
 }
 
+.past-trips-container > h1 {
+    font-size: 2.5rem;
+}
+
 h1, h2 {
     text-align: center;
     color: #333;

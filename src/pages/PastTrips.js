@@ -127,7 +127,7 @@ const PastTrips = () => {
 
   return (
     <div className="past-trips-container">
-      <h1>Past Trips</h1>
+      <h1><strong>Past Trips</strong></h1>
       {driverTrips.length > 0 && (
         <>
           <h2>Driver Trips</h2>
