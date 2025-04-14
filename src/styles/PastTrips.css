@@ -1,6 +1,6 @@
 .past-trips-container {
     padding: 20px;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
 }
 
 h1, h2 {
@@ -13,7 +13,7 @@ h1, h2 {
 }
 
 .trip-item {
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9; */
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 15px;
@@ -22,11 +22,13 @@ h1, h2 {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(to bottom, #c7f9ff, #c8e0ff);
 }
 
 .trip-item p {
     margin: 5px 0;
     color: #555;
+    font-size: 1.1em;
 }
 
 .trip-item strong {
@@ -85,10 +87,56 @@ h1, h2 {
 }
 
 .google-maps-preview {
-    width: 200px;
-    height: 100px;
+    width: 300px;
+    height: 200px;
     border: 0;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     object-fit: cover;
+}
+
+button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+    border: 1px solid #aaa;
+}
+
+.cancel-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+    background-color: #d32f2f;
+}
+
+.unrated-badge {
+    display: inline-block;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    border-radius: 50%;
+    margin-left: 8px;
+    cursor: default;
+}
+
+.trip-actions {
+    display: flex;
+    align-items: center;
+}
+
+.MuiRating-iconFilled {
+    color: darkgoldenrod;
 }

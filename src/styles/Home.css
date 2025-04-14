@@ -17,8 +17,15 @@
 }
 
 .signupbox {
-    background-color: rgb(255, 222, 89);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    /* background-color: rgb(255, 222, 89); */
+    background: linear-gradient(to bottom, #c2ebea, #f5fbfb);
     width: 100vw;
+    height: 30vh;
     right: 0;
     margin: 0;
     padding: 0;

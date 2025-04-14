@@ -12,7 +12,7 @@ const Driver = () => {
                 efficiently and offer flexible schedules, fair earning, and strong support.
                 Our goal is to make driving with DriveU a positive and fulfilling experience.
             </p>
-            <div className="signupbox">
+            <div className="signupbox-driver">
                 <h2>Want to start making some quick lunch money?</h2>
                 <h2>Sign up <span className="blue-text">today</span>!</h2>
             </div>

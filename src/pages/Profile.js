@@ -3,7 +3,11 @@ import axios from 'axios';
 import { auth } from '../firebase';
 import '../styles/Profile.css';
 import universityNames from '../data/us_institutions.json';
+import vehicleModels from '../data/vehicle_models_cleaned.json';
 import { Avatar } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useProfile } from '../context/ProfileContext';
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -24,45 +28,13 @@ const Profile = () => {
   const [filteredSchools, setFilteredSchools] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [rawPhoneNumber, setRawPhoneNumber] = useState('');
+  const [modelOptions, setModelOptions] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const fileInputRef = React.useRef(null);
+  const { setProfilePicture } = useProfile();
 
   useEffect(() => {
-    // const fetchUserData = async () => {
-    //   const user = auth.currentUser;
-    //   if (user) {
-    //     setFirebaseUid(user.uid);
-    //     try {
-    //       const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/users`, {
-    //         params: {
-    //           firebaseUid: user.uid,
-    //         },
-    //       });
-
-    //       const userId = response.data.user.id;
-    //       setUserId(userId);
-
-    //       // console.log('API response:', response.data); // Debugging
-    //       // console.log('User ID:', userId); // Debugging
-    //       if (response.data.user) {
-    //         const rawPhone = response.data.user.phoneNumber || '';
-    //         const formattedPhone = formatPhoneNumber(rawPhone);
-            
-    //         setUserData(response.data.user);
-    //         setFormData({
-    //           ...response.data.user,
-    //           phoneNumber: formattedPhone,
-    //           driver: response.data.user.driver ? 'yes' : 'no',
-    //         });
-    //         setRawPhoneNumber(rawPhone);
-    //       } else {
-    //         console.error('User data not found');
-    //       }
-    //     } catch (error) {
-    //       console.error('Error fetching user data:', error);
-    //     }
-    //   }
-    // };
-
-    // fetchUserData();
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setFirebaseUid(user.uid);
@@ -101,6 +73,15 @@ const Profile = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (formData.carMake) {
+      const selectedMake = vehicleModels.find(make => make.Make === formData.carMake);
+      setModelOptions(selectedMake ? selectedMake.Models : []);
+    } else {
+      setModelOptions([]);
+    }
+  }, [formData.carMake]);
+
   const getProfilePictureUrl = () => {
     if (!firebaseUid) return null;
     return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
@@ -134,7 +115,44 @@ const Profile = () => {
   };
 
   const handleSaveChanges = async () => {
+    if (!formData.name || !formData.phoneNumber || !formData.school) {
+      toast.error('Please fill out all required fields.');
+      return;
+    }
+  
+    if (formData.driver === 'yes') {
+      if (!formData.carMake || !formData.carModel || !formData.carColor || !formData.carPlate) {
+        toast.error('Please fill out all vehicle details.');
+        return;
+      }
+    }
     try {
+      if (selectedImage) {
+        const formData = new FormData();
+        formData.append('file', selectedImage);
+        formData.append('firebaseUid', firebaseUid);
+
+        let base64Image = '';
+        if (selectedImage) {
+          base64Image = await convertFileToBase64(selectedImage);
+        }
+
+        const profilePicPayload = {
+          firebaseUid: firebaseUid,
+          profilePic: base64Image,
+        };
+
+        const backendURL = process.env.REACT_APP_BACKEND_URL;
+
+        const response2 = await axios.post(`${backendURL}/profilePic`, profilePicPayload);
+        if (response2.status === 200) {
+          setProfilePicture(getProfilePictureUrl());
+          // console.log('Profile picture saved successfully');
+        } else {
+          console.error('Failed to save profile picture');
+        }
+      }
+
       const queryParams = new URLSearchParams({
         userId: userId,
         name: formData.name,
@@ -167,8 +185,10 @@ const Profile = () => {
         driver: formData.driver === 'yes' ? 'yes' : 'no',
       });
       setIsEditing(false);
+      toast.success('Profile updated successfully!');
     } catch (error) {
       console.error('Error saving user data:', error);
+      toast.error('Error saving user data.');
       // console.log('Driver status:', formData.driver === 'yes'); // Debugging
     }
   };
@@ -224,39 +244,68 @@ const Profile = () => {
     setShowDropdown(false);
   };
 
+  const convertFileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   if (!userData) {
     return <div className="loading"><strong>Loading...</strong></div>;
   }
 
+
+
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <Avatar
-          alt={userData.name}
-          src={getProfilePictureUrl()}
-          sx={{ width: 150, height: 150 }}
+        <div
+          className="profile-picture-container"
+          onClick={() => isEditing && fileInputRef.current.click()}
         >
-          {userData.name?.charAt(0)}
-        </Avatar>
+          <Avatar
+            alt={userData.name}
+            src={previewImage || getProfilePictureUrl()}
+            sx={{ width: 150, height: 150, cursor: isEditing ? 'pointer' : 'default' }}
+          >
+            {userData.name?.charAt(0)}
+          </Avatar>
+        </div>
         <h2>{userData.name}</h2>
 
         {userData.driverRating !== 0 && (
           <div className="rating">
             <strong>Driver Rating: </strong>
+            <span className="star">★</span>
             <span>{userData.driverRating.toFixed(1)}</span>
           </div>
         )}
         {userData.riderRating !== 0 && (
           <div className="rating">
             <strong>Rider Rating: </strong>
+            <span className="star">★</span>
             <span>{userData.riderRating.toFixed(1)}</span>
           </div>
         )}
 
-        {!isEditing && ( // Only show the button when not editing
-          <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
-        )}
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) {
+              setSelectedImage(file);
+              setPreviewImage(URL.createObjectURL(file));
+            }
+          }}
+        />
       </div>
+
       <div className="profile-details">
         {isEditing ? (
           <>
@@ -267,6 +316,7 @@ const Profile = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                required
               />
             </label>
             <label>
@@ -286,6 +336,7 @@ const Profile = () => {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                required
               />
             </label>
             <label>
@@ -297,6 +348,7 @@ const Profile = () => {
                 name="school"
                 value={formData.school}
                 onChange={handleSchoolChange}
+                required
               />
               {showDropdown && (
                 <ul className="dropdown">
@@ -315,6 +367,7 @@ const Profile = () => {
                 name="driver"
                 value={formData.driver}
                 onChange={handleChange}
+                required
               >
                 <option value="">Select</option>
                 <option value="yes">Yes</option>
@@ -323,24 +376,51 @@ const Profile = () => {
             </label>
             {formData.driver === 'yes' && (
               <>
-                <label>
-                  <strong>Car Make:</strong>
-                  <input
-                    type="text"
-                    name="carMake"
-                    value={formData.carMake}
-                    onChange={handleChange}
-                  />
-                </label>
-                <label>
-                  <strong>Car Model:</strong>
-                  <input
-                    type="text"
-                    name="carModel"
-                    value={formData.carModel}
-                    onChange={handleChange}
-                  />
-                </label>
+                <label><strong>Car Make:</strong></label>
+                <select
+                  name="carMake"
+                  value={formData.carMake}
+                  onChange={(e) => {
+                    const selectedMake = e.target.value;
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      carMake: selectedMake,
+                      carModel: '',
+                    }));
+                  }}
+                  required
+                >
+                  <option value="">Select Car Make</option>
+                  {vehicleModels.map((make) => (
+                    <option key={make.Make} value={make.Make}>
+                      {make.Make}
+                    </option>
+                  ))}
+                </select>
+
+                <label><strong>Car Model:</strong></label>
+                <select
+                  name="carModel"
+                  value={formData.carModel}
+                  onChange={(e) => {
+                    const selectedModel = e.target.value;
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      carModel: selectedModel,
+                    }));
+                    
+                  }}
+                  required
+                  disabled={!formData.carMake}
+                >
+                  <option value="">Select Car Model</option>
+                  {modelOptions.map((model, index) => (
+                    <option key={index} value={model}>
+                      {model}
+                    </option>
+                  ))}
+                </select>
+                
                 <label>
                   <strong>Car Color:</strong>
                   <input
@@ -348,6 +428,7 @@ const Profile = () => {
                     name="carColor"
                     value={formData.carColor}
                     onChange={handleChange}
+                    required
                   />
                 </label>
                 <label>
@@ -357,6 +438,7 @@ const Profile = () => {
                     name="carPlate"
                     value={formData.carPlate}
                     onChange={handleChange}
+                    required
                   />
                 </label>
               </>
@@ -406,7 +488,11 @@ const Profile = () => {
             )}
           </>
         )}
+        {!isEditing && ( // Only show the button when not editing
+          <button onClick={handleEditProfile} className="edit-button">Edit Profile</button>
+        )}
       </div>
+      <ToastContainer />
     </div>
   );
 };

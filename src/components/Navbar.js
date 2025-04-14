@@ -4,13 +4,15 @@ import { auth } from '../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Navbar.css';
+import { useProfile } from '../context/ProfileContext';
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const [firebaseUid, setFirebaseUid] = useState(null);
+  // const [firebaseUid, setFirebaseUid] = useState(null);
+  const { profilePicture } = useProfile();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -18,7 +20,7 @@ const Navbar = () => {
         await currentUser.reload();
         if (currentUser.emailVerified) {
           setUser(currentUser);
-          setFirebaseUid(currentUser.uid);
+          // setFirebaseUid(currentUser.uid);
         } else {
           setUser(null);
         }
@@ -44,10 +46,10 @@ const Navbar = () => {
     return () => unsubscribe();
   }, [location]);
 
-  const getProfilePictureUrl = () => {
-    if (!firebaseUid) return 'default-profile.png';
-    return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
-  };
+  // const getProfilePictureUrl = () => {
+  //   if (!firebaseUid) return 'default-profile.png';
+  //   return `${process.env.REACT_APP_BACKEND_URL}/uploads/${firebaseUid}.jpeg`;
+  // };
 
   const handleLogout = async () => {
     try {
@@ -156,7 +158,8 @@ const Navbar = () => {
             }}>
             <Avatar 
               alt={user.name} 
-              src={getProfilePictureUrl()} 
+              // src={getProfilePictureUrl()}
+              src={profilePicture}
               sx={{ width: 40, height: 40 }}
             >
               

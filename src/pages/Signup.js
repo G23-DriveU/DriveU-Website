@@ -7,6 +7,8 @@ import vehicleModels from '../data/vehicle_models_cleaned.json';
 import universityNames from '../data/us_institutions.json';
 import PayPalLoginButton from '../components/linkPayPal';
 import { createUserWithEmailAndPassword, sendEmailVerification, onAuthStateChanged } from 'firebase/auth';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -45,22 +47,7 @@ const Signup = () => {
       }
     });
 
-    // Polling mechanism to check email verification status
-    const intervalId = setInterval(async () => {
-      const user = auth.currentUser;
-      if (user) {
-        await user.reload();
-        if (user.emailVerified) {
-          navigate('/');
-          clearInterval(intervalId);
-        }
-      }
-    }, 3000); // Check every 3 seconds
-
-    return () => {
-      unsubscribe();
-      clearInterval(intervalId);
-    };
+    return () => unsubscribe();
   }, [navigate]);
 
   useEffect(() => {
@@ -105,7 +92,7 @@ const Signup = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       await sendEmailVerification(user);
-      alert('Verification email sent! Please verify your email before proceeding.');
+      toast.success('Verification email sent! Please verify your email before proceeding.');
 
       let emailVerified = false;
       while (!emailVerified) {
@@ -159,13 +146,14 @@ const Signup = () => {
       } else {
         console.error('Failed to save profile picture');
       }
+
+      toast.success('Email verified successfully!');
+      navigate('/');
+      
     } catch (error) {
       console.error('Error during signup: ', error);
       alert(error.message);
     }
-      
-      
-    
   };
 
   const convertFileToBase64 = (file) => {
@@ -439,6 +427,7 @@ const Signup = () => {
 
         <button type="submit">Sign Up</button>
       </form>
+      <ToastContainer />
     </div>
   );
 };

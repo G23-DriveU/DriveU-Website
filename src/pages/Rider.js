@@ -11,7 +11,7 @@ const Rider = () => {
                 It helps students find reliable rides that fit their needs and schedule while
                 ensuring a safe and stress-free experience.
             </p>
-            <div className="signupbox">
+            <div className="signupbox-rider">
                 <h2>Want to start driving around and making new friends?</h2>
                 <h2>Sign up <span className="blue-text">today</span>!</h2>
             </div>

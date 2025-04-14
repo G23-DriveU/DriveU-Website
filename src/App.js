@@ -12,11 +12,13 @@ import theme from './theme';
 import Profile from './pages/Profile';
 import PastTrips from './pages/PastTrips';
 import ScrollToTop from './components/ScrollToTop';
+import { ProfileProvider } from './context/ProfileContext';
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
+      <ProfileProvider>
       <div className="App">
           <ThemeProvider theme={theme}>
             <Navbar />
@@ -35,6 +37,7 @@ function App() {
             </Routes>
           </div>
       </div>
+      </ProfileProvider>
     </Router>
   );
 }
